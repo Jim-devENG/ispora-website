@@ -60,6 +60,7 @@ const navItems: NavItem[] = [
 export function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
 
   // Stats state
@@ -268,11 +269,11 @@ export function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex">
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <aside
         className={`${
           sidebarOpen ? 'w-64' : 'w-0'
-        } bg-slate-800 border-r border-slate-700 transition-all duration-300 overflow-hidden flex flex-col`}
+        } hidden lg:flex bg-slate-800 border-r border-slate-700 transition-all duration-300 overflow-hidden flex-col`}
       >
         {/* Sidebar Header */}
         <div className="p-6 border-b border-slate-700">
@@ -280,7 +281,7 @@ export function AdminDashboard() {
             <h1 className="text-xl font-bold text-white">iSpora Admin</h1>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -323,8 +324,17 @@ export function AdminDashboard() {
         <header className="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => {
+                setMobileSidebarOpen(true);
+                setSidebarOpen(true);
+              }}
               className="text-slate-400 hover:text-white transition-colors lg:hidden"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="hidden lg:block text-slate-400 hover:text-white transition-colors"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -397,12 +407,66 @@ export function AdminDashboard() {
         </main>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+      {/* Mobile Sidebar */}
+      {mobileSidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => {
+              setMobileSidebarOpen(false);
+              setSidebarOpen(false);
+            }}
+          />
+          <aside className="fixed left-0 top-0 h-full w-64 bg-slate-800 border-r border-slate-700 z-50 lg:hidden flex flex-col">
+            {/* Sidebar Header */}
+            <div className="p-6 border-b border-slate-700">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-xl font-bold text-white">iSpora Admin</h1>
+                <button
+                  onClick={() => {
+                    setMobileSidebarOpen(false);
+                    setSidebarOpen(false);
+                  }}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    activeTab === item.id
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`}
+                >
+                  {item.icon}
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              ))}
+            </nav>
+
+            {/* Logout Button */}
+            <div className="p-4 border-t border-slate-700">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                <span className="font-medium">Logout</span>
+              </button>
+            </div>
+          </aside>
+        </>
       )}
     </div>
   );
