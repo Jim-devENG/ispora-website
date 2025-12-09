@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { BlogPost } from '../../../src/types/admin';
 import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
+import { ImageUpload } from '../../ui/ImageUpload';
 
 interface BlogTabProps {
   posts: BlogPost[];
@@ -23,6 +24,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
     author_name: '',
     excerpt: '',
     content: '',
+    cover_image_url: '',
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -37,6 +39,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
         author_name: post.author_name || '',
         excerpt: post.excerpt || '',
         content: post.content,
+        cover_image_url: post.cover_image_url || '',
       });
     } else {
       setEditingPost(null);
@@ -47,6 +50,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
         author_name: '',
         excerpt: '',
         content: '',
+        cover_image_url: '',
       });
     }
     setIsModalOpen(true);
@@ -56,14 +60,15 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingPost(null);
-    setFormData({
-      title: '',
-      slug: '',
-      status: 'draft',
-      author_name: '',
-      excerpt: '',
-      content: '',
-    });
+      setFormData({
+        title: '',
+        slug: '',
+        status: 'draft',
+        author_name: '',
+        excerpt: '',
+        content: '',
+        cover_image_url: '',
+      });
     setSaveError(null);
   };
 
@@ -77,11 +82,16 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
     setSaveError(null);
 
     try {
+      const payload = {
+        ...formData,
+        cover_image_url: formData.cover_image_url || null,
+      };
+
       if (editingPost) {
         // Update existing post
         const response = await apiClient.patch<{ post: BlogPost }>(
           `/api/blog-posts/${editingPost.id}`,
-          formData
+          payload
         );
         setPosts(posts.map(p => p.id === editingPost.id ? response.post : p));
         console.log('[BlogTab] Post updated:', response.post.id);
@@ -89,7 +99,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
         // Create new post
         const response = await apiClient.post<{ post: BlogPost }>(
           '/api/blog-posts',
-          formData
+          payload
         );
         setPosts([response.post, ...posts]);
         console.log('[BlogTab] Post created:', response.post.id);
@@ -322,6 +332,15 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
                   value={formData.author_name}
                   onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
                   className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <ImageUpload
+                  value={formData.cover_image_url}
+                  onChange={(url) => setFormData({ ...formData, cover_image_url: url || '' })}
+                  type="blog"
+                  label="Cover Image"
                 />
               </div>
 

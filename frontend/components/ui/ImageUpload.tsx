@@ -4,6 +4,7 @@ import { Input } from './input';
 import { Label } from './label';
 import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { cn } from './utils';
+import { supabase } from '../../src/lib/supabase';
 
 interface ImageUploadProps {
   value?: string;
@@ -48,90 +49,43 @@ export function ImageUpload({
     setUploading(true);
 
     try {
-      // Convert file to base64
-      const base64 = await fileToBase64(file);
-      
-      // Upload to API
-      let response: Response;
-      try {
-        response = await fetch('/api/upload-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image: base64,
-            type: type,
-            fileName: file.name
-          }),
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${type}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `images/${fileName}`;
+
+      console.log('[ImageUpload] Uploading to Supabase Storage:', filePath);
+
+      // Upload to Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
         });
-      } catch (fetchError: any) {
-        // Network error (CORS, network failure, etc.)
-        console.error('Fetch error:', fetchError);
-        throw new Error(`Network error: ${fetchError.message || 'Failed to connect to API. Please check your connection and try again.'}`);
+
+      if (uploadError) {
+        console.error('[ImageUpload] Upload error:', uploadError);
+        throw new Error(uploadError.message || 'Failed to upload image to Supabase Storage');
       }
 
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type') || '';
-      const isJson = contentType.includes('application/json');
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
 
-      if (!response.ok) {
-        let errorMessage = `Upload failed (${response.status} ${response.statusText})`;
-        
-        if (isJson) {
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorData.details || errorData.message || errorMessage;
-            // Include details if available
-            if (errorData.details && errorData.details !== errorData.error) {
-              errorMessage += `: ${errorData.details}`;
-            }
-          } catch (e) {
-            // If JSON parsing fails, use status text
-            errorMessage = `Upload failed: ${response.status} ${response.statusText}`;
-          }
-        } else {
-          // If response is HTML (like a 404 page), try to get text
-          try {
-            const text = await response.text();
-            console.error('Non-JSON error response:', text.substring(0, 500));
-            if (response.status === 404) {
-              errorMessage = `API endpoint not found (404). Please ensure /api/upload-image is deployed correctly.`;
-            } else {
-              errorMessage = `Server error (${response.status}): ${response.statusText}`;
-            }
-          } catch (textError) {
-            errorMessage = `Server error (${response.status}): ${response.statusText}`;
-          }
-        }
-        throw new Error(errorMessage);
+      if (!urlData?.publicUrl) {
+        throw new Error('Failed to get public URL for uploaded image');
       }
 
-      if (!isJson) {
-        const text = await response.text();
-        console.error('Non-JSON success response:', text.substring(0, 200));
-        throw new Error('Server returned invalid response format. Expected JSON but got: ' + contentType);
-      }
+      const imageUrl = urlData.publicUrl;
+      console.log('[ImageUpload] Upload successful:', imageUrl);
 
-      let data;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        throw new Error('Failed to parse server response. Please try again.');
-      }
-      
-      if (!data.imageUrl) {
-        console.error('Response data:', data);
-        throw new Error('Server response missing imageUrl. Response: ' + JSON.stringify(data));
-      }
-      
       // Set preview and call onChange
-      setPreview(data.imageUrl);
-      onChange(data.imageUrl);
+      setPreview(imageUrl);
+      onChange(imageUrl);
     } catch (err: any) {
-      console.error('Upload error:', err);
-      // Show the actual error message
+      console.error('[ImageUpload] Upload error:', err);
       setError(err.message || 'Failed to upload image. Please try again.');
     } finally {
       setUploading(false);
@@ -140,15 +94,6 @@ export function ImageUpload({
         fileInputRef.current.value = '';
       }
     }
-  };
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   };
 
   const handleRemove = () => {
@@ -269,5 +214,3 @@ export function ImageUpload({
     </div>
   );
 }
-
-

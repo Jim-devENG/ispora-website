@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Event } from '../../../src/types/admin';
 import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
+import { ImageUpload } from '../../ui/ImageUpload';
 
 interface EventsTabProps {
   events: Event[];
@@ -24,6 +25,7 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
     location: '',
     registration_link: '',
     description: '',
+    cover_image_url: '',
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -39,6 +41,7 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
         location: event.location || '',
         registration_link: event.registration_link || '',
         description: event.description || '',
+        cover_image_url: event.cover_image_url || '',
       });
     } else {
       setEditingEvent(null);
@@ -50,6 +53,7 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
         location: '',
         registration_link: '',
         description: '',
+        cover_image_url: '',
       });
     }
     setIsModalOpen(true);
@@ -59,15 +63,16 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingEvent(null);
-    setFormData({
-      title: '',
-      status: 'draft',
-      start_at: '',
-      end_at: '',
-      location: '',
-      registration_link: '',
-      description: '',
-    });
+      setFormData({
+        title: '',
+        status: 'draft',
+        start_at: '',
+        end_at: '',
+        location: '',
+        registration_link: '',
+        description: '',
+        cover_image_url: '',
+      });
     setSaveError(null);
   };
 
@@ -85,6 +90,7 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
         ...formData,
         start_at: new Date(formData.start_at).toISOString(),
         end_at: formData.end_at ? new Date(formData.end_at).toISOString() : null,
+        cover_image_url: formData.cover_image_url || null,
       };
 
       if (editingEvent) {
@@ -309,6 +315,15 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
                   <option value="published">Published</option>
                   <option value="archived">Archived</option>
                 </select>
+              </div>
+
+              <div>
+                <ImageUpload
+                  value={formData.cover_image_url}
+                  onChange={(url) => setFormData({ ...formData, cover_image_url: url || '' })}
+                  type="event"
+                  label="Cover Image"
+                />
               </div>
 
               <div>
