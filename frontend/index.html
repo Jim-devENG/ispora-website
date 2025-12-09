@@ -4,11 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/major%20icon.jpg" />
     <style>
+      /* Force white background on logo images */
       img[src*="major icon.jpg"],
-      img[src*="major%20icon.jpg"] {
+      img[src*="major%20icon.jpg"],
+      img[alt*="iSpora Logo"],
+      img[alt*="Logo"] {
         background: white !important;
         background-color: white !important;
       }
+      
+      /* Force white background on logo containers */
+      [class*="Logo"] img,
+      .logo img,
+      div[class*="relative"] img[src*="major"] {
+        background: white !important;
+        background-color: white !important;
+      }
+      
+      /* Dark mode - use transparent */
       @media (prefers-color-scheme: dark) {
         img[src*="major icon.jpg"],
         img[src*="major%20icon.jpg"] {
