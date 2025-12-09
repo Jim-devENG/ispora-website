@@ -103,7 +103,7 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
         <AnimatedBlob className="top-0 right-0 bg-primary/15" delay={0} size="w-96 h-96" />
         <AnimatedDots />
         
-        <div className="relative z-10 max-w-4xl mx-auto">
+        <div className="relative z-10 max-w-7xl mx-auto px-4">
           <Button
             variant="ghost"
             onClick={() => onPageChange('webinars')}
@@ -115,7 +115,7 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
 
           {event.cover_image_url && (
             <motion.div
-              className="relative w-full mb-8 shadow-xl rounded-2xl overflow-hidden"
+              className="relative w-full mb-8 shadow-2xl rounded-2xl overflow-hidden bg-white"
               initial="hidden"
               animate="visible"
               variants={{
@@ -130,12 +130,14 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
               <img 
                 src={event.cover_image_url} 
                 alt={event.title}
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain max-w-full"
+                style={{ display: 'block' }}
               />
             </motion.div>
           )}
 
           <motion.div
+            className="max-w-4xl mx-auto"
             initial="hidden"
             animate="visible"
             variants={{
