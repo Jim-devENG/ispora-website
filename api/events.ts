@@ -113,6 +113,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
+      console.log('[API][EVENTS] Inserting event with data:', JSON.stringify({ ...eventData, description: eventData.description ? '[truncated]' : null }));
+
       const { data, error } = await supabase
         .from('events')
         .insert(eventData)
@@ -121,19 +123,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) {
         console.error('[API][EVENTS] Supabase insert error:', error);
-        throw error;
+        console.error('[API][EVENTS] Error code:', error.code);
+        console.error('[API][EVENTS] Error message:', error.message);
+        console.error('[API][EVENTS] Error details:', error.details);
+        console.error('[API][EVENTS] Error hint:', error.hint);
+        return res.status(500).json({ 
+          error: 'Failed to create event',
+          details: error.message,
+          code: error.code,
+          hint: error.hint || 'Check database schema and constraints'
+        });
       }
 
+      console.log('[API][EVENTS] Event created successfully:', data?.id);
       return res.status(201).json({ event: data as Event });
     }
 
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('[API][EVENTS] Failed to load events');
+    console.error('[API][EVENTS] Unexpected error:', error);
     console.error('[API][EVENTS] Error message:', error?.message);
+    console.error('[API][EVENTS] Error code:', error?.code);
+    console.error('[API][EVENTS] Error details:', error?.details);
     console.error('[API][EVENTS] Stack trace:', error?.stack);
     return res.status(500).json({ 
       error: 'Internal server error',
+      details: error?.message || 'Unknown error',
+      code: error?.code,
       hint: 'Check server logs for [API][EVENTS]'
     });
   }
