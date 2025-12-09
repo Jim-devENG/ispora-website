@@ -34,15 +34,18 @@ After creating the bucket, you need to set up Row Level Security (RLS) policies:
    ```
 7. Click **"Review"** → **"Save policy"**
 
-### Policy 2: Allow Authenticated Uploads
+### Policy 2: Allow Public Uploads (for Admin Dashboard)
+
+Since the admin dashboard uses the anon key, we need to allow public uploads:
 
 1. Click **"New Policy"** again
-2. Policy name: `Allow authenticated uploads`
+2. Policy name: `Allow public uploads`
 3. Allowed operation: **INSERT** (Upload)
 4. Policy definition:
    ```sql
-   auth.role() = 'authenticated'
+   true
    ```
+   **Note**: This allows anyone to upload. If you want more security, you can restrict by checking the anon key or adding authentication later.
 5. Click **"Review"** → **"Save policy"**
 
 ### Policy 3: Allow Authenticated Updates/Deletes (Optional)
