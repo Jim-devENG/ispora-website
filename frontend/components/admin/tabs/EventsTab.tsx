@@ -114,7 +114,14 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
       onRefresh();
     } catch (error: any) {
       console.error('[EventsTab] Failed to save event:', error);
-      setSaveError(error.message || 'Failed to save event');
+      // Show detailed error message
+      const errorMsg = error.message || 'Failed to save event';
+      setSaveError(errorMsg);
+      // Also log full error for debugging
+      if (error.details || error.hint) {
+        console.error('[EventsTab] Error details:', error.details);
+        console.error('[EventsTab] Error hint:', error.hint);
+      }
     } finally {
       setSaving(false);
     }

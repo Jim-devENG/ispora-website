@@ -53,7 +53,12 @@ async function request<T = any>(
         const contentType = response.headers.get('content-type') || '';
         if (contentType.includes('application/json')) {
           const errorData = await response.json();
-          errorMessage = errorData.error || errorData.message || errorMessage;
+          // Build detailed error message
+          const parts = [errorData.error || errorData.message || errorMessage];
+          if (errorData.details) parts.push(`Details: ${errorData.details}`);
+          if (errorData.hint) parts.push(`Hint: ${errorData.hint}`);
+          if (errorData.code) parts.push(`Code: ${errorData.code}`);
+          errorMessage = parts.join('. ');
         } else {
           const text = await response.text();
           if (text) {
