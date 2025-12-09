@@ -120,13 +120,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Prepare event data (sanitize all string fields)
       const eventData: Partial<Event> = {
         title: sanitizeString(body.title, 500),
-        description: body.description || null,
+        description: body.description ? sanitizeString(body.description, 10000) : null,
         start_at: startAt.toISOString(),
         end_at: body.end_at ? new Date(body.end_at).toISOString() : null,
-        location: body.location || null,
-        registration_link: body.registration_link || null,
-        status: body.status || 'draft',
-        cover_image_url: body.cover_image_url || null,
+        location: body.location ? sanitizeString(body.location, 200) : null,
+        registration_link: body.registration_link && isValidURL(body.registration_link) ? body.registration_link : null,
+        status: ['draft', 'published', 'archived'].includes(body.status) ? body.status : 'draft',
+        cover_image_url: body.cover_image_url && isValidURL(body.cover_image_url) ? body.cover_image_url : null,
       };
 
       // Validate end_at if provided
