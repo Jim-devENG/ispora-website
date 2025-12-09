@@ -115,7 +115,7 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
 
           {event.cover_image_url && (
             <motion.div
-              className="relative h-64 sm:h-96 rounded-2xl overflow-hidden mb-8 shadow-xl"
+              className="relative w-full mb-8 shadow-xl rounded-2xl overflow-hidden"
               initial="hidden"
               animate="visible"
               variants={{
@@ -130,9 +130,8 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
               <img 
                 src={event.cover_image_url} 
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className="w-full h-auto object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
             </motion.div>
           )}
 
