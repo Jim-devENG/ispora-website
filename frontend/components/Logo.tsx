@@ -24,17 +24,25 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
       whileHover={safeAnimate({ scale: 1.05 })}
       whileTap={safeAnimate({ scale: 0.95 })}
     >
-      <div className="relative bg-white dark:bg-transparent rounded">
+      <div 
+        className="relative bg-white dark:bg-transparent rounded overflow-hidden"
+        style={{
+          backgroundColor: 'white',
+          padding: '2px'
+        }}
+      >
         <img 
           src="/major icon.jpg" 
           alt="iSpora Logo" 
-          className={cn(sizeClasses[size], "bg-white dark:bg-transparent")}
+          className={cn(sizeClasses[size])}
           style={{ 
             backgroundColor: 'white',
-            mixBlendMode: 'normal',
+            mixBlendMode: 'multiply',
             objectFit: 'contain',
             imageRendering: 'auto',
-            display: 'block'
+            display: 'block',
+            filter: 'contrast(1.1) brightness(1.05)',
+            WebkitFilter: 'contrast(1.1) brightness(1.05)'
           }}
         />
       </div>
