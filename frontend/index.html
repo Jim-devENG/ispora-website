@@ -4,27 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/major%20icon.jpg" />
     <style>
-      /* Force white background on logo images */
+      /* Force white background on logo images and containers */
       img[src*="major icon.jpg"],
       img[src*="major%20icon.jpg"],
       img[alt*="iSpora Logo"],
-      img[alt*="Logo"] {
-        background: white !important;
-        background-color: white !important;
-      }
-      
-      /* Force white background on logo containers */
+      img[alt*="Logo"],
       [class*="Logo"] img,
       .logo img,
-      div[class*="relative"] img[src*="major"] {
+      div[class*="relative"] img[src*="major"],
+      div[class*="Logo"] {
         background: white !important;
         background-color: white !important;
       }
       
-      /* Dark mode - use transparent */
+      /* Force white background on parent containers */
+      [class*="Logo"] > div,
+      [class*="Logo"] > div > div {
+        background: white !important;
+        background-color: white !important;
+      }
+      
+      /* Use multiply blend mode to remove black backgrounds */
+      img[src*="major icon.jpg"],
+      img[src*="major%20icon.jpg"] {
+        mix-blend-mode: multiply !important;
+        background: white !important;
+        background-color: white !important;
+      }
+      
+      /* Dark mode - use screen blend mode */
       @media (prefers-color-scheme: dark) {
         img[src*="major icon.jpg"],
         img[src*="major%20icon.jpg"] {
+          mix-blend-mode: screen !important;
           background: transparent !important;
           background-color: transparent !important;
         }
