@@ -12,6 +12,7 @@ import { CommunityPage } from './components/CommunityPage';
 import { AppPage } from './components/AppPage';
 import { JoinPage } from './components/JoinPage';
 import { BlogPage } from './components/BlogPage';
+import { BlogPostDetailPage } from './components/BlogPostDetailPage';
 import { WebinarsPage } from './components/WebinarsPage';
 import { FeaturesPage } from './components/FeaturesPage';
 import { ProjectsPage } from './components/ProjectsPage';
@@ -66,6 +67,9 @@ function AppContent() {
     const applyPath = () => {
       const path = window.location.pathname.replace('/', '') || 'home';
       if (validPages.includes(path)) {
+        setCurrentPage(path);
+      } else if (path.startsWith('blog-post-')) {
+        // Handle blog post detail pages
         setCurrentPage(path);
       } else {
         setCurrentPage('home');
@@ -148,6 +152,11 @@ function AppContent() {
       case 'admin':
         return <AdminDashboard />;
       default:
+        // Handle blog post detail pages (blog-post-[id])
+        if (currentPage.startsWith('blog-post-')) {
+          const postId = currentPage.replace('blog-post-', '');
+          return <BlogPostDetailPage onPageChange={handlePageChange} postId={postId} />;
+        }
         return <HomePage onPageChange={handlePageChange} />;
     }
   };

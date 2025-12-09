@@ -220,7 +220,10 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                   }
                 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 overflow-hidden group cursor-pointer">
+                <Card 
+                  className="h-full hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 overflow-hidden group cursor-pointer"
+                  onClick={() => onPageChange(`blog-post-${post.id}`)}
+                >
                     <div className="relative h-48 overflow-hidden">
                     <img 
                       src={post.cover_image_url || post.image_url || post.image || '/conference.jpg'} 
@@ -266,7 +269,12 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                           <span>{post.comments || 0}</span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-xs">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-xs"
+                        onClick={() => onPageChange(`blog-post-${post.id}`)}
+                      >
                         Read
                         <ArrowRight className="ml-1 h-3 w-3" />
                       </Button>
