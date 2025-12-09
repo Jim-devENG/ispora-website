@@ -1,3 +1,9 @@
+# NOTE: LEGACY NETLIFY CONFIGURATION
+# This file is legacy (Netlify deployment). The current live deployment is intended to be on Vercel.
+# If ispora.com is still pointing at Netlify, this could explain differences between local and live behavior.
+# The active deployment should use Vercel (vercel.json) with API routes in api/ folder.
+# This netlify.toml and netlify/functions/ directory are kept for reference but should NOT be used.
+
 [build]
   publish = "dist"
   command = "npm run build"
