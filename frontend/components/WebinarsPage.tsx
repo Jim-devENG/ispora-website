@@ -139,7 +139,9 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayEvents.map((event: any, index: number) => (
+              {displayEvents.map((event: any, index: number) => {
+                const eventImage = event.cover_image_url || event.image_url || event.image || '/conference.jpg';
+                return (
               <motion.div
                 key={event.id}
                 initial="hidden"
@@ -156,29 +158,35 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
               >
                 <Card 
                   className={cn(
-                    "h-full hover:shadow-xl transition-all duration-300 border-2 overflow-hidden cursor-pointer",
+                    "h-full hover:shadow-xl transition-all duration-300 border-2 overflow-hidden",
                     activeTab === 'upcoming' && index === 0
                       ? "bg-primary text-primary-foreground border-primary shadow-lg"
                       : "border-primary/20 hover:border-primary/40 bg-card"
                   )}
-                  onClick={() => onPageChange(`event-${event.id}`)}
                 >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
+                  {/* Image with hover overlay */}
+                  <div 
+                    className="relative h-64 overflow-hidden group cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImage({ url: eventImage, alt: event.title });
+                    }}
+                  >
                     <img 
-                      src={event.cover_image_url || event.image_url || event.image || '/conference.jpg'} 
+                      src={eventImage} 
                       alt={event.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className={cn(
-                      "absolute inset-0",
+                      "absolute inset-0 transition-all duration-300",
                       activeTab === 'upcoming' && index === 0
                         ? "bg-gradient-to-br from-primary/60 via-primary/40 to-primary/50"
-                        : "bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"
+                        : "bg-gradient-to-br from-primary/20 via-transparent to-secondary/20",
+                      "group-hover:bg-black/40"
                     )} />
                     {event.location && (
                       <Badge className={cn(
-                        "absolute top-3 right-3",
+                        "absolute top-3 right-3 z-10",
                         activeTab === 'upcoming' && index === 0
                           ? "bg-white/20 text-white border-white/30"
                           : "bg-primary text-white"
@@ -186,6 +194,13 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                         {event.location}
                       </Badge>
                     )}
+                    {/* Hover overlay with Read More */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-white/90 text-foreground px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+                        <ZoomIn className="h-4 w-4" />
+                        View Flyer
+                      </div>
+                    </div>
                   </div>
 
                   <CardHeader className="pb-3">
