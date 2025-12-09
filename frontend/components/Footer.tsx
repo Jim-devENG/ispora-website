@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { motion } from 'motion/react';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { Logo } from './Logo';
 import { 
   Globe, 
   Mail, 
@@ -160,21 +161,14 @@ export function Footer({ onPageChange }: FooterProps) {
             variants={itemVariants}
           >
             <motion.div 
-              className="flex items-center mb-4"
+              className="mb-4"
               whileHover={safeAnimate({ scale: 1.05 })}
             >
-              <motion.div 
-                className="h-10 w-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center mr-3"
-                animate={safeAnimate({ rotate: [0, 5, 0] })}
-                transition={safeTransition({ duration: 2, repeat: 999999, ease: "easeInOut" })}
-              >
-                <Globe className="h-6 w-6 text-white" />
-              </motion.div>
-              <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-mona">
-                  iSpora
-                </span>
-              </div>
+              <Logo 
+                size="md" 
+                showText={true}
+                onClick={() => onPageChange('home')}
+              />
             </motion.div>
             
             <p className="text-muted-foreground mb-6 leading-relaxed">

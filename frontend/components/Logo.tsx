@@ -33,7 +33,12 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
         <img 
           src="/major icon.jpg" 
           alt="iSpora Logo" 
-          className={sizeClasses[size]}
+          className={cn(sizeClasses[size], "bg-transparent")}
+          style={{ 
+            backgroundColor: 'transparent',
+            mixBlendMode: 'normal',
+            objectFit: 'contain'
+          }}
         />
       </motion.div>
       {showText && (
