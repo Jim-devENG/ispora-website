@@ -246,19 +246,31 @@ export function BlogPostDetailPage({ onPageChange, postId, postSlug }: BlogPostD
             <div 
               className={cn(
                 "text-base sm:text-lg leading-relaxed",
-                "prose-headings:font-bold prose-headings:text-foreground",
-                "prose-p:text-foreground/90 prose-p:mb-6",
-                "prose-a:text-primary prose-a:underline",
+                "prose-headings:font-bold prose-headings:text-foreground prose-headings:mt-8 prose-headings:mb-4",
+                "prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl",
+                "prose-p:text-foreground/90 prose-p:mb-6 prose-p:leading-relaxed",
+                "prose-a:text-primary prose-a:underline hover:prose-a:text-primary/80",
                 "prose-strong:text-foreground prose-strong:font-semibold",
-                "prose-ul:list-disc prose-ol:list-decimal",
-                "prose-li:text-foreground/90",
-                "prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic",
-                "prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded",
-                "prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded-lg",
-                "prose-img:rounded-lg prose-img:shadow-lg"
+                "prose-ul:list-disc prose-ol:list-decimal prose-ul:ml-6 prose-ol:ml-6",
+                "prose-li:text-foreground/90 prose-li:mb-2",
+                "prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6",
+                "prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm",
+                "prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto",
+                "prose-img:rounded-lg prose-img:shadow-lg prose-img:my-8"
               )}
-              dangerouslySetInnerHTML={{ __html: post.content || '' }}
-            />
+            >
+              {post.content ? (
+                // Check if content contains HTML tags
+                post.content.includes('<') && post.content.includes('>') ? (
+                  <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                ) : (
+                  // Plain text - preserve line breaks
+                  <div className="whitespace-pre-wrap">{post.content}</div>
+                )
+              ) : (
+                <p className="text-muted-foreground">No content available.</p>
+              )}
+            </div>
           </motion.article>
 
           {/* Back to Blog Button */}
