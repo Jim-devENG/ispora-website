@@ -8,25 +8,28 @@ import { getSupabaseClient } from './_lib/supabase.js';
 import type { Event } from './_types/content.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  let supabase;
-  try {
-    supabase = getSupabaseClient();
-  } catch (err: any) {
-    console.error('[EVENTS] Supabase connection failed:', err);
-    return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message
-    });
-  }
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[API][EVENTS] Supabase connection failed:', err);
+    console.error('[API][EVENTS] Error message:', err?.message);
+    console.error('[API][EVENTS] Stack trace:', err?.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][EVENTS]'
+    });
+  }
 
   try {
     if (req.method === 'GET') {
@@ -63,11 +66,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await query;
 
       if (error) {
-        console.error('[EVENTS_GET] Supabase query error:', error);
+        console.error('[API][EVENTS] Supabase query error:', error);
         throw error;
       }
 
-      console.log(`[EVENTS_GET] Found ${data?.length || 0} events`);
       return res.status(200).json({ events: (data || []) as Event[] });
     }
 
@@ -118,20 +120,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .single();
 
       if (error) {
-        console.error('[EVENTS_POST] Supabase insert error:', error);
+        console.error('[API][EVENTS] Supabase insert error:', error);
         throw error;
       }
 
-      console.log('[EVENTS_POST] Event created successfully:', data.id);
       return res.status(201).json({ event: data as Event });
     }
 
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('[EVENTS] API error:', error);
+    console.error('[API][EVENTS] Failed to load events');
+    console.error('[API][EVENTS] Error message:', error?.message);
+    console.error('[API][EVENTS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Internal Server Error', 
-      details: error?.message
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][EVENTS]'
     });
   }
 }

@@ -2,19 +2,26 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient, transformRegistration } from '../_lib/supabase.js';
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
-  console.log('Stats API: Starting request...');
-  
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
+
+  if (_req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(204).end();
+  }
+
   let supabase;
   try {
-    console.log('Stats API: Connecting to Supabase...');
     supabase = getSupabaseClient();
-    console.log('Stats API: Supabase connected successfully');
   } catch (err: any) {
-    console.error('Stats API: Supabase connection failed:', err);
+    console.error('[API][DASHBOARD_STATS] Supabase connection failed:', err);
+    console.error('[API][DASHBOARD_STATS] Error message:', err?.message);
+    console.error('[API][DASHBOARD_STATS] Stack trace:', err?.stack);
     return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message,
-      stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][DASHBOARD_STATS]'
     });
   }
 
@@ -73,14 +80,14 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       recentActivity
     };
 
-    console.log('Stats API: Returning result:', result);
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error('Stats API: Error computing stats:', error);
+    console.error('[API][DASHBOARD_STATS] Failed to load stats');
+    console.error('[API][DASHBOARD_STATS] Error message:', error?.message);
+    console.error('[API][DASHBOARD_STATS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Failed to compute stats', 
-      details: error?.message,
-      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][DASHBOARD_STATS]'
     });
   }
 }

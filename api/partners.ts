@@ -2,25 +2,28 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  let supabase;
-  try {
-    supabase = getSupabaseClient();
-  } catch (err: any) {
-    console.error('Supabase connection failed:', err);
-    return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message
-    });
-  }
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[API][PARTNERS] Supabase connection failed:', err);
+    console.error('[API][PARTNERS] Error message:', err?.message);
+    console.error('[API][PARTNERS] Stack trace:', err?.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][PARTNERS]'
+    });
+  }
 
   try {
     if (req.method === 'GET') {
@@ -37,7 +40,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('[API][PARTNERS] Supabase query error:', error);
+        throw error;
+      }
+      
       return res.status(200).json(data || []);
     }
 
@@ -77,7 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .single();
 
       if (error) {
-        console.error('Supabase insert error:', error);
+        console.error('[API][PARTNERS] Supabase insert error:', error);
         throw error;
       }
 
@@ -86,10 +93,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('API error:', error);
+    console.error('[API][PARTNERS] Failed to load partners');
+    console.error('[API][PARTNERS] Error message:', error?.message);
+    console.error('[API][PARTNERS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Internal Server Error', 
-      details: error?.message
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][PARTNERS]'
     });
   }
 }

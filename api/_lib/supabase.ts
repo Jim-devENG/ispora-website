@@ -1,19 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Strict environment variable validation
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn('Supabase environment variables are not set. API routes will fail without them.');
+// Validate environment variables synchronously
+function validateEnvVars() {
+  if (!SUPABASE_URL || SUPABASE_URL.trim() === '') {
+    throw new Error('Missing SUPABASE_URL environment variable. Required for Supabase connection.');
+  }
+  
+  if (!SUPABASE_SERVICE_ROLE_KEY || SUPABASE_SERVICE_ROLE_KEY.trim() === '') {
+    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable. Required for Supabase connection.');
+  }
 }
 
 // Create Supabase client with service role key (for admin operations)
 export function getSupabaseClient() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error('Missing Supabase environment variables: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
-  }
+  // Validate env vars before creating client
+  validateEnvVars();
 
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  return createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
       autoRefreshToken: false,
       persistSession: false

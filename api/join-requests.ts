@@ -7,25 +7,28 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  let supabase;
-  try {
-    supabase = getSupabaseClient();
-  } catch (err: any) {
-    console.error('[JOIN_REQUESTS] Supabase connection failed:', err);
-    return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message
-    });
-  }
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[API][JOIN_REQUESTS] Supabase connection failed:', err);
+    console.error('[API][JOIN_REQUESTS] Error message:', err?.message);
+    console.error('[API][JOIN_REQUESTS] Stack trace:', err?.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][JOIN_REQUESTS]'
+    });
+  }
 
   try {
     if (req.method === 'GET') {
@@ -43,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await query;
 
       if (error) {
-        console.error('[JOIN_REQUESTS_GET] Supabase error:', error);
+        console.error('[API][JOIN_REQUESTS] Supabase query error:', error);
         throw error;
       }
 
@@ -73,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .single();
 
       if (error) {
-        console.error('[JOIN_REQUESTS_POST] Supabase error:', error);
+        console.error('[API][JOIN_REQUESTS] Supabase insert error:', error);
         throw error;
       }
 
@@ -84,10 +87,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Allow', 'GET, POST, OPTIONS');
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('[JOIN_REQUESTS] Error:', error);
+    console.error('[API][JOIN_REQUESTS] Failed to load join requests');
+    console.error('[API][JOIN_REQUESTS] Error message:', error?.message);
+    console.error('[API][JOIN_REQUESTS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Failed to process join request', 
-      details: error?.message
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][JOIN_REQUESTS]'
     });
   }
 }

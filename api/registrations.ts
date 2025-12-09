@@ -2,26 +2,28 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient, transformRegistration } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  let supabase;
-  try {
-    supabase = getSupabaseClient();
-  } catch (err: any) {
-    console.error('Supabase connection failed:', err);
-    return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message,
-      stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined
-    });
-  }
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[API][REGISTRATIONS] Supabase connection failed:', err);
+    console.error('[API][REGISTRATIONS] Error message:', err?.message);
+    console.error('[API][REGISTRATIONS] Stack trace:', err?.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][REGISTRATIONS]'
+    });
+  }
 
   try {
     if (req.method === 'POST') {
@@ -81,17 +83,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw error;
       }
 
-      console.log(`Found ${data?.length || 0} registrations`);
       return res.status(200).json(data?.map(transformRegistration) || []);
     }
 
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('API error:', error);
+    console.error('[API][REGISTRATIONS] Failed to load registrations');
+    console.error('[API][REGISTRATIONS] Error message:', error?.message);
+    console.error('[API][REGISTRATIONS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Internal Server Error', 
-      details: error?.message,
-      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][REGISTRATIONS]'
     });
   }
 }

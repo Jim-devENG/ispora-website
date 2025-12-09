@@ -8,25 +8,28 @@ import { getSupabaseClient } from './_lib/supabase.js';
 import type { BlogPost } from './_types/content.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  let supabase;
-  try {
-    supabase = getSupabaseClient();
-  } catch (err: any) {
-    console.error('[BLOG_POSTS] Supabase connection failed:', err);
-    return res.status(500).json({ 
-      error: 'Database connection failed', 
-      details: err?.message
-    });
-  }
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[API][BLOG_POSTS] Supabase connection failed:', err);
+    console.error('[API][BLOG_POSTS] Error message:', err?.message);
+    console.error('[API][BLOG_POSTS] Stack trace:', err?.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][BLOG_POSTS]'
+    });
+  }
 
   try {
     if (req.method === 'GET') {
@@ -58,11 +61,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await query;
 
       if (error) {
-        console.error('[BLOG_POSTS_GET] Supabase query error:', error);
+        console.error('[API][BLOG_POSTS] Supabase query error:', error);
         throw error;
       }
 
-      console.log(`[BLOG_POSTS_GET] Found ${data?.length || 0} posts`);
       return res.status(200).json({ posts: (data || []) as BlogPost[] });
     }
 
@@ -103,7 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .single();
 
       if (error) {
-        console.error('[BLOG_POSTS_POST] Supabase insert error:', error);
+        console.error('[API][BLOG_POSTS] Supabase insert error:', error);
         
         // Handle unique constraint violation (duplicate slug)
         if (error.code === '23505') {
@@ -116,16 +118,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw error;
       }
 
-      console.log('[BLOG_POSTS_POST] Post created successfully:', data.id);
       return res.status(201).json({ post: data as BlogPost });
     }
 
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('[BLOG_POSTS] API error:', error);
+    console.error('[API][BLOG_POSTS] Failed to load blog posts');
+    console.error('[API][BLOG_POSTS] Error message:', error?.message);
+    console.error('[API][BLOG_POSTS] Stack trace:', error?.stack);
     return res.status(500).json({ 
-      error: 'Internal Server Error', 
-      details: error?.message
+      error: 'Internal server error',
+      hint: 'Check server logs for [API][BLOG_POSTS]'
     });
   }
 }
