@@ -19,9 +19,11 @@ import {
   ExternalLink,
   CheckCircle,
   PlayCircle,
-  Loader2
+  Loader2,
+  ZoomIn
 } from 'lucide-react';
 import { cn } from './ui/utils';
+import { ImageModal } from './ui/ImageModal';
 
 interface WebinarsPageProps {
   onPageChange: (page: string) => void;
@@ -185,7 +187,7 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                     )}
                   </div>
 
-                  <CardHeader>
+                  <CardHeader className="pb-3">
                     <div className={cn(
                       "flex items-center space-x-2 mb-2 text-xs",
                       activeTab === 'upcoming' && index === 0 ? "text-white/80" : "text-muted-foreground"
@@ -200,36 +202,16 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                       )}
                     </div>
                     <CardTitle className={cn(
-                      "text-xl font-bold mb-2",
+                      "text-lg font-bold mb-1 line-clamp-2",
                       activeTab === 'upcoming' && index === 0 && "text-white"
                     )}>
                       {event.title}
                     </CardTitle>
-                    <CardDescription className={cn(
-                      "text-sm leading-relaxed",
-                      activeTab === 'upcoming' && index === 0 && "text-white/90"
-                    )}>
-                      {event.description || 'No description available'}
-                    </CardDescription>
                   </CardHeader>
 
-                  <CardContent>
-                    {event.location && (
-                      <div className={cn(
-                        "mb-4 pb-4 border-b",
-                        activeTab === 'upcoming' && index === 0 ? "border-white/20" : "border-border"
-                      )}>
-                        <div className={cn(
-                          "text-sm font-medium",
-                          activeTab === 'upcoming' && index === 0 ? "text-white" : "text-foreground"
-                        )}>
-                          📍 {event.location}
-                        </div>
-                      </div>
-                    )}
-
+                  <CardContent className="pt-0">
                     {activeTab === 'upcoming' ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {event.registration_link && (
                           <Button 
                             className={cn(
@@ -261,9 +243,9 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         <p className={cn(
-                          "text-sm",
+                          "text-xs",
                           index === 0 ? "text-white/80" : "text-muted-foreground"
                         )}>
                           This event has ended.
@@ -287,7 +269,8 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                   </CardContent>
                 </Card>
               </motion.div>
-              ))}
+              );
+              })}
             </div>
           )}
 
