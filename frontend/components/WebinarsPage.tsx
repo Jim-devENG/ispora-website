@@ -33,6 +33,7 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<{ url: string; alt: string } | null>(null);
 
   // Fetch events from API
   // API URL: /api/events?upcoming=true (for upcoming) or /api/events?status=all (for all)
@@ -292,6 +293,14 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
           </motion.div>
         </div>
       </Section>
+
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={!!selectedImage}
+        imageUrl={selectedImage?.url || ''}
+        alt={selectedImage?.alt || ''}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 }
