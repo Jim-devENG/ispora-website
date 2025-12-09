@@ -38,10 +38,15 @@ This checklist helps verify that `ispora.com` is serving the correct deployment 
 - [ ] If domain is missing or pointing to different project, **this is the problem**
 
 ### 2.2 Check DNS Configuration
-- [ ] Go to your DNS provider (Namecheap, Cloudflare, etc.)
+- [ ] Go to your DNS provider (Namecheap)
 - [ ] Check DNS records for `ispora.com`:
-  - [ ] Should have **CNAME** record pointing to: `cname.vercel-dns.com` (or Vercel's provided value)
-  - [ ] OR **A** records pointing to Vercel IPs (if using A records)
+  - [ ] **A Record**: `@` → `216.198.79.1` (for root domain)
+  - [ ] **CNAME Record**: `www` → `cf09c2bad433f855.vercel-dns-017.com.` (for www subdomain)
+- [ ] Verify DNS records match **exactly** what Vercel shows in Domain settings
+- [ ] If Vercel shows "Invalid Configuration":
+  - [ ] Wait 15-30 minutes for DNS propagation
+  - [ ] Click "Refresh" in Vercel domain settings
+  - [ ] Verify records are correct in Namecheap
 - [ ] Verify DNS is **NOT** pointing to:
   - [ ] Netlify (e.g., `netlify.com` or `netlify.app`)
   - [ ] Render (e.g., `render.com`)
