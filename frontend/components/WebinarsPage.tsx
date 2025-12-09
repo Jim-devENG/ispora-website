@@ -151,12 +151,15 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                   }
                 }}
               >
-                <Card className={cn(
-                  "h-full hover:shadow-xl transition-all duration-300 border-2 overflow-hidden",
-                  activeTab === 'upcoming' && index === 0
-                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                    : "border-primary/20 hover:border-primary/40 bg-card"
-                )}>
+                <Card 
+                  className={cn(
+                    "h-full hover:shadow-xl transition-all duration-300 border-2 overflow-hidden cursor-pointer",
+                    activeTab === 'upcoming' && index === 0
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                      : "border-primary/20 hover:border-primary/40 bg-card"
+                  )}
+                  onClick={() => onPageChange(`event-${event.id}`)}
+                >
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img 
@@ -233,12 +236,29 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                               "w-full",
                               index === 0 && "bg-white text-primary hover:bg-white/90"
                             )}
-                            onClick={() => window.open(event.registration_link || '#', '_blank')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(event.registration_link || '#', '_blank');
+                            }}
                           >
                             Register Now
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                         )}
+                        <Button
+                          variant={index === 0 ? "outline" : "ghost"}
+                          className={cn(
+                            "w-full",
+                            index === 0 && "border-white/30 text-white hover:bg-white/10"
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPageChange(`event-${event.id}`);
+                          }}
+                        >
+                          Read More
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-3">

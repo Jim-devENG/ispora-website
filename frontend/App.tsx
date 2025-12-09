@@ -13,6 +13,7 @@ import { AppPage } from './components/AppPage';
 import { JoinPage } from './components/JoinPage';
 import { BlogPage } from './components/BlogPage';
 import { BlogPostDetailPage } from './components/BlogPostDetailPage';
+import { EventDetailPage } from './components/EventDetailPage';
 import { WebinarsPage } from './components/WebinarsPage';
 import { FeaturesPage } from './components/FeaturesPage';
 import { ProjectsPage } from './components/ProjectsPage';
@@ -68,8 +69,8 @@ function AppContent() {
       const path = window.location.pathname.replace('/', '') || 'home';
       if (validPages.includes(path)) {
         setCurrentPage(path);
-      } else if (path.startsWith('blog-post-')) {
-        // Handle blog post detail pages
+      } else if (path.startsWith('blog-post-') || path.startsWith('event-')) {
+        // Handle blog post and event detail pages
         setCurrentPage(path);
       } else {
         setCurrentPage('home');
@@ -156,6 +157,11 @@ function AppContent() {
         if (currentPage.startsWith('blog-post-')) {
           const postId = currentPage.replace('blog-post-', '');
           return <BlogPostDetailPage onPageChange={handlePageChange} postId={postId} />;
+        }
+        // Handle event detail pages (event-[id])
+        if (currentPage.startsWith('event-')) {
+          const eventId = currentPage.replace('event-', '');
+          return <EventDetailPage onPageChange={handlePageChange} eventId={eventId} />;
         }
         return <HomePage onPageChange={handlePageChange} />;
     }
