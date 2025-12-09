@@ -146,8 +146,10 @@ export function AdminDashboard() {
       setStats({
         totalRegistrations: data.totalRegistrations,
         todayRegistrations: data.todayRegistrations,
-        totalBlogPosts: data.totalBlogPosts,
-        totalEvents: data.totalEvents,
+        thisWeekRegistrations: data.thisWeekRegistrations || 0,
+        thisMonthRegistrations: data.thisMonthRegistrations || 0,
+        topCountries: data.topCountries || [],
+        recentActivity: data.recentActivity || [],
       });
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load stats:', err);
@@ -337,10 +339,9 @@ export function AdminDashboard() {
           {activeTab === 'overview' && (
             <OverviewTab
               stats={stats}
+              statsLoading={statsLoading}
+              statsError={statsError}
               registrations={registrations}
-              loading={statsLoading || registrationsLoading}
-              error={statsError || registrationsError}
-              onRefresh={handleRefresh}
             />
           )}
 

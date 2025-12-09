@@ -5,7 +5,7 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   root: './frontend', // Frontend source is now in frontend/
-  publicDir: './frontend/public', // Public assets
+  publicDir: './public', // Public assets (relative to root)
   plugins: [react()],
   resolve: {
     alias: {
