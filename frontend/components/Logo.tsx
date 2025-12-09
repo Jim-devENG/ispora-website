@@ -12,9 +12,9 @@ interface LogoProps {
 
 export function Logo({ size = 'md', showText = true, className = '', onClick }: LogoProps) {
   const sizeClasses = {
-    sm: { container: 'h-6 w-6', text: 'text-[10px]' },
-    md: { container: 'h-10 w-10', text: 'text-xs' },
-    lg: { container: 'h-16 w-16', text: 'text-base' }
+    sm: { container: 'h-8 w-8', text: 'text-[10px]' },
+    md: { container: 'h-12 w-12', text: 'text-xs' },
+    lg: { container: 'h-20 w-20', text: 'text-base' }
   };
 
   const currentSize = sizeClasses[size];
