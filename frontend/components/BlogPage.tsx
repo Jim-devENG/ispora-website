@@ -147,7 +147,10 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                         <span>{new Date(displayFeatured.published_at || displayFeatured.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <Button className="w-full sm:w-auto">
+                    <Button 
+                      className="w-full sm:w-auto"
+                      onClick={() => displayFeatured && onPageChange(`blog-post-${displayFeatured.id}`)}
+                    >
                       Read More
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>

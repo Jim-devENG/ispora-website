@@ -43,27 +43,22 @@ export function BlogPostDetailPage({ onPageChange, postId, postSlug }: BlogPostD
       setError(null);
       
       try {
-        // Try to fetch by ID first, then by slug
-        let url = '/api/blog-posts';
+        // Fetch by ID
         if (postId) {
-          url = `/api/blog-posts/${postId}`;
+          const response = await fetchJson<{ post: any }>(`/api/blog-posts/${postId}`);
+          setPost(response.post);
         } else if (postSlug) {
-          // If we have slug, we need to fetch all and filter (or add slug endpoint)
+          // If we have slug, fetch all and filter
           const response = await fetchJson<{ posts: any[] }>('/api/blog-posts?status=published');
           const foundPost = response.posts.find((p: any) => p.slug === postSlug);
           if (foundPost) {
             setPost(foundPost);
-            setLoading(false);
-            return;
           } else {
             throw new Error('Post not found');
           }
         } else {
           throw new Error('Post ID or slug is required');
         }
-
-        const response = await fetchJson<{ post: any }>(url);
-        setPost(response.post);
       } catch (err: any) {
         console.error('Error fetching blog post:', err);
         setError(err.message || 'Failed to load blog post');
