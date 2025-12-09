@@ -252,6 +252,7 @@ export function AdminDashboard() {
         {activeTab === 'registrations' && (
           <RegistrationsTab
             registrations={registrations}
+            setRegistrations={setRegistrations}
             loading={registrationsLoading}
             error={registrationsError}
             onRefresh={loadRegistrations}
@@ -261,6 +262,7 @@ export function AdminDashboard() {
         {activeTab === 'blog' && (
           <BlogTab
             posts={posts}
+            setPosts={setPosts}
             loading={postsLoading}
             error={postsError}
             onRefresh={loadBlogPosts}
@@ -270,6 +272,7 @@ export function AdminDashboard() {
         {activeTab === 'events' && (
           <EventsTab
             events={events}
+            setEvents={setEvents}
             loading={eventsLoading}
             error={eventsError}
             onRefresh={loadEvents}
@@ -279,6 +282,7 @@ export function AdminDashboard() {
         {activeTab === 'partners' && (
           <PartnersTab
             partners={partners}
+            setPartners={setPartners}
             loading={partnersLoading}
             error={partnersError}
             onRefresh={loadPartners}
@@ -288,6 +292,7 @@ export function AdminDashboard() {
         {activeTab === 'join' && (
           <JoinTab
             joinRequests={joinRequests}
+            setJoinRequests={setJoinRequests}
             loading={joinLoading}
             error={joinError}
             onRefresh={loadJoinRequests}

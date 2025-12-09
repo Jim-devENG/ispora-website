@@ -1,15 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Registration } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle } from 'lucide-react';
+import { apiClient } from '../../../src/lib/apiClient';
 
 interface RegistrationsTabProps {
   registrations: Registration[];
+  setRegistrations: React.Dispatch<React.SetStateAction<Registration[]>>;
   loading: boolean;
   error: string | null;
   onRefresh: () => void;
 }
 
-export function RegistrationsTab({ registrations, loading, error, onRefresh }: RegistrationsTabProps) {
+export function RegistrationsTab({ registrations, setRegistrations, loading, error, onRefresh }: RegistrationsTabProps) {
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const handleStatusUpdate = async (id: string, newStatus: 'pending' | 'verified' | 'active') => {
+    setUpdating(id);
+    setUpdateError(null);
+
+    try {
+      const response = await apiClient.patch<{ registration: Registration }>(
+        `/api/registrations/${id}`,
+        { status: newStatus }
+      );
+      setRegistrations(registrations.map(r => r.id === id ? response.registration : r));
+      console.log('[RegistrationsTab] Status updated:', id, newStatus);
+    } catch (error: any) {
+      console.error('[RegistrationsTab] Failed to update status:', error);
+      setUpdateError(error.message || 'Failed to update status');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete registration for "${name}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeleting(id);
+    setDeleteError(null);
+
+    try {
+      await apiClient.del(`/api/registrations/${id}`);
+      setRegistrations(registrations.filter(r => r.id !== id));
+      console.log('[RegistrationsTab] Registration deleted:', id);
+    } catch (error: any) {
+      console.error('[RegistrationsTab] Failed to delete registration:', error);
+      setDeleteError(error.message || 'Failed to delete registration');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const getNextStatus = (currentStatus: string): 'pending' | 'verified' | 'active' | null => {
+    if (currentStatus === 'pending') return 'verified';
+    if (currentStatus === 'verified') return 'active';
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -41,6 +93,18 @@ export function RegistrationsTab({ registrations, loading, error, onRefresh }: R
 
   return (
     <div className="space-y-4">
+      {/* Error messages */}
+      {updateError && (
+        <div className="bg-red-900/20 border border-red-800 rounded-lg p-3 text-sm text-red-300">
+          {updateError}
+        </div>
+      )}
+      {deleteError && (
+        <div className="bg-red-900/20 border border-red-800 rounded-lg p-3 text-sm text-red-300">
+          {deleteError}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-slate-50">
           Registrations ({registrations.length})
@@ -66,35 +130,68 @@ export function RegistrationsTab({ registrations, loading, error, onRefresh }: R
                 <th className="px-4 py-3 text-left font-medium">Group</th>
                 <th className="px-4 py-3 text-left font-medium">Status</th>
                 <th className="px-4 py-3 text-left font-medium">Created</th>
+                <th className="px-4 py-3 text-left font-medium">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
               {registrations.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
                     No registrations found
                   </td>
                 </tr>
               ) : (
-                registrations.map((reg) => (
-                  <tr key={reg.id} className="hover:bg-slate-900/60 transition-colors">
-                    <td className="px-4 py-3 text-slate-200">{reg.name}</td>
-                    <td className="px-4 py-3 text-slate-300">{reg.email}</td>
-                    <td className="px-4 py-3 text-slate-300">{reg.countryOfResidence}</td>
-                    <td className="px-4 py-3 text-slate-300">{reg.countryOfOrigin}</td>
-                    <td className="px-4 py-3">
-                      <span className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
-                        {reg.group}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={reg.status} />
-                    </td>
-                    <td className="px-4 py-3 text-slate-400">
-                      {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))
+                registrations.map((reg) => {
+                  const nextStatus = getNextStatus(reg.status);
+                  return (
+                    <tr key={reg.id} className="hover:bg-slate-900/60 transition-colors">
+                      <td className="px-4 py-3 text-slate-200">{reg.name}</td>
+                      <td className="px-4 py-3 text-slate-300">{reg.email}</td>
+                      <td className="px-4 py-3 text-slate-300">{reg.countryOfResidence}</td>
+                      <td className="px-4 py-3 text-slate-300">{reg.countryOfOrigin}</td>
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
+                          {reg.group}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={reg.status} />
+                      </td>
+                      <td className="px-4 py-3 text-slate-400">
+                        {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          {nextStatus && (
+                            <button
+                              onClick={() => handleStatusUpdate(reg.id, nextStatus)}
+                              disabled={updating === reg.id}
+                              className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs transition-colors disabled:opacity-50 flex items-center"
+                              title={`Set status to ${nextStatus}`}
+                            >
+                              {updating === reg.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <CheckCircle className="h-3 w-3" />
+                              )}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(reg.id, reg.name)}
+                            disabled={deleting === reg.id}
+                            className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                          >
+                            {deleting === reg.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-3 w-3" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -117,4 +214,3 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
-
