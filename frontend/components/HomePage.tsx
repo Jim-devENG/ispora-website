@@ -33,11 +33,6 @@ interface HomePageProps {
 export function HomePage({ onPageChange }: HomePageProps) {
   return (
     <div className="min-h-screen">
-      {/* DEBUG MARKER - DO NOT SHIP */}
-      <div className="fixed top-0 right-0 z-[9999] px-2 py-1 text-[10px] bg-emerald-600 text-white font-mono">
-        PUBLIC DEBUG BUILD — {import.meta.env.MODE} — {new Date().toISOString().slice(0, 10)}
-      </div>
-      
       {/* Hero Section */}
       <Section 
         className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 border-b border-primary/20"

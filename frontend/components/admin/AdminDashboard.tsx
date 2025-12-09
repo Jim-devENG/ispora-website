@@ -205,11 +205,6 @@ export function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      {/* DEBUG MARKER - DO NOT SHIP */}
-      <div className="fixed top-0 left-0 z-[9999] px-2 py-1 text-[10px] bg-red-600 text-white font-mono">
-        ADMIN DEBUG BUILD — DO NOT SHIP — {import.meta.env.MODE} — {new Date().toISOString().slice(0, 10)}
-      </div>
-      
       {/* Header */}
       <div className="border-b border-slate-800 bg-slate-900/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
