@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { cn } from './ui/utils';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -23,13 +24,7 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
       whileHover={safeAnimate({ scale: 1.05 })}
       whileTap={safeAnimate({ scale: 0.95 })}
     >
-      <motion.div 
-        className="relative"
-        whileHover={safeAnimate({ 
-          scale: 1.1,
-          transition: safeTransition({ duration: 0.3 })
-        })}
-      >
+      <div className="relative">
         <img 
           src="/major icon.jpg" 
           alt="iSpora Logo" 
@@ -37,10 +32,11 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
           style={{ 
             backgroundColor: 'transparent',
             mixBlendMode: 'normal',
-            objectFit: 'contain'
+            objectFit: 'contain',
+            imageRendering: 'auto'
           }}
         />
-      </motion.div>
+      </div>
       {showText && (
         <div className="hidden sm:block ml-3">
           <span className="text-sm text-muted-foreground font-mona">
