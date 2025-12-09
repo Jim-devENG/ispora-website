@@ -268,6 +268,20 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                         )}>
                           This event has ended.
                         </p>
+                        <Button
+                          variant={index === 0 ? "outline" : "ghost"}
+                          className={cn(
+                            "w-full",
+                            index === 0 && "border-white/30 text-white hover:bg-white/10"
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPageChange(`event-${event.id}`);
+                          }}
+                        >
+                          Read More
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
                       </div>
                     )}
                   </CardContent>
