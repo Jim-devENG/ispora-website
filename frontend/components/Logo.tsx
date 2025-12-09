@@ -31,7 +31,7 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
         })}
       >
         <img 
-          src="/logo.svg" 
+          src="/major icon.jpg" 
           alt="iSpora Logo" 
           className={sizeClasses[size]}
         />
