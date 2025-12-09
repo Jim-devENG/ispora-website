@@ -53,10 +53,10 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
       initials: 'EO'
     },
     {
-      name: 'Enietan James',
+      name: 'James Enietan',
       role: 'Co-Founder & Chief Technology Officer (CTO)',
-      bio: 'Enietan is a seasoned full-stack software engineer with a strong track record of building advanced digital solutions. He leads the development of the iSpora digital platform, overseeing its architecture, engineering, functionality, and user experience as CTO.',
-      initials: 'EJ'
+      bio: 'James Enietan is a multi-disciplinary builder — a software developer, brand architect, and strategic founder shaping people, platforms, and products. With more than a decade in tech, he has designed systems, built digital products, and advised initiatives across faith, leadership, and execution. He leads Teqxure (formerly Contexture Global Technologies), a solutions company evolving into a premium builder ecosystem that incubates thinkers, creators, and execution-driven leaders. He founded Kingdom Light Bearers, a spiritual formation and discipleship movement committed to raising believers who carry light, influence, and ministry expression into culture. James is a co-founder of Crysgarage, an online sound-mastering platform, while establishing The VisionSmith, a productivity and influence community. His work spans spiritual leadership, tech innovation, and organizational development — consistently focused on building people, institutions, and systems that outlast him.',
+      initials: 'JE'
     }
   ];
 
