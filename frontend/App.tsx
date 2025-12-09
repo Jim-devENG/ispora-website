@@ -146,7 +146,7 @@ function AppContent() {
       case 'careers':
         return <CareersPage onPageChange={handlePageChange} />;
       case 'admin':
-        return isAdminAuthenticated ? <AdminDashboard /> : <AdminAccess onAccessGranted={handleAdminAccess} />;
+        return <AdminDashboard />;
       default:
         return <HomePage onPageChange={handlePageChange} />;
     }
