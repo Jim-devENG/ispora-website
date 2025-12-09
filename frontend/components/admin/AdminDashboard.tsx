@@ -195,7 +195,8 @@ export function AdminDashboard() {
     setEventsLoading(true);
     setEventsError(null);
     try {
-      const data = await fetchJson<EventsResponse>('/api/events');
+      // Admin dashboard should show ALL events (draft, published, archived)
+      const data = await fetchJson<EventsResponse>('/api/events?status=all');
       setEvents(data.events || []);
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load events:', err);
