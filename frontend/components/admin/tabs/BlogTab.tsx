@@ -175,6 +175,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
           <button
             onClick={() => openModal()}
             className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm transition-colors"
+            type="button"
           >
             <Plus className="h-4 w-4 mr-2" />
             New Post
