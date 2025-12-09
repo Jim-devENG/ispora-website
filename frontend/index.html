@@ -4,8 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/major%20icon.jpg" />
     <style>
-      img[src*="major icon.jpg"] {
-        background: transparent !important;
+      img[src*="major icon.jpg"],
+      img[src*="major%20icon.jpg"] {
+        background: white !important;
+        background-color: white !important;
+      }
+      @media (prefers-color-scheme: dark) {
+        img[src*="major icon.jpg"],
+        img[src*="major%20icon.jpg"] {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
