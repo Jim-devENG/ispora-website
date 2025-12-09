@@ -6,6 +6,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 import type { BlogPost } from './_types/content.js';
+import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, sanitizeString, isValidURL } from './_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -16,6 +17,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
+  }
+
+  // Rate limiting
+  const clientIP = getClientIP(req);
+  const rateLimit = checkRateLimit(clientIP);
+  if (!rateLimit.allowed) {
+    return res.status(429).json({ 
+      error: 'Too many requests. Please try again later.',
+      retryAfter: 60
+    });
   }
 
   let supabase;
@@ -69,18 +80,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'POST') {
-      const body = req.body || {};
+      // Sanitize input
+      const body = sanitizeObject(req.body || {});
       
       // Validate required fields
-      if (!body.title || !body.slug || !body.content) {
+      const validation = validateRequired(body, ['title', 'slug', 'content']);
+      if (!validation.valid) {
         return res.status(400).json({ 
-          error: 'Missing required fields: title, slug, and content are required' 
+          error: 'Missing required fields: title, slug, and content are required',
+          missing: validation.missing
         });
       }
 
-      // Prepare post data
+      // Validate cover_image_url if provided
+      if (body.cover_image_url && !isValidURL(body.cover_image_url)) {
+        return res.status(400).json({ 
+          error: 'Invalid cover_image_url format' 
+        });
+      }
+
+      // Prepare post data (sanitize all string fields)
       const postData: Partial<BlogPost> = {
-        title: body.title,
+        title: sanitizeString(body.title, 500),
         slug: body.slug,
         content: body.content,
         excerpt: body.excerpt || null,

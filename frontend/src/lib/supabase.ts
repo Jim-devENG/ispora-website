@@ -35,9 +35,14 @@ See VERCEL_ENV_SETUP.md for detailed instructions.
 }
 
 // Use actual values or throw in production
+// Never expose service role keys or sensitive data in frontend
+if (import.meta.env.PROD && (!SUPABASE_URL || !SUPABASE_ANON_KEY)) {
+  throw new Error('Missing required environment variables');
+}
+
 export const supabase = createClient(
-  SUPABASE_URL || (import.meta.env.PROD ? '' : 'https://cjpzxwqeonxddilqxilw.supabase.co'),
-  SUPABASE_ANON_KEY || (import.meta.env.PROD ? '' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqcHp4d3Flb254ZGRpbHF4aWx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5ODU3NDEsImV4cCI6MjA4MDU2MTc0MX0.QHX05mz3T0rdHn2qdwq2gRc1hdBhJSE7WfYsmw3Rfl8'),
+  SUPABASE_URL || '',
+  SUPABASE_ANON_KEY || '',
   {
     auth: {
       persistSession: false,

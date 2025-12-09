@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient, transformRegistration } from './_lib/supabase.js';
+import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, isValidEmail, sanitizeString } from './_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -10,6 +11,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
+  }
+
+  // Rate limiting
+  const clientIP = getClientIP(req);
+  const rateLimit = checkRateLimit(clientIP);
+  if (!rateLimit.allowed) {
+    return res.status(429).json({ 
+      error: 'Too many requests. Please try again later.',
+      retryAfter: 60
+    });
   }
 
   let supabase;
@@ -27,31 +38,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'POST') {
-      const body = req.body || {};
-      console.log('Received registration data:', JSON.stringify(body, null, 2));
+      // Sanitize input
+      const body = sanitizeObject(req.body || {});
       
-      // Basic validation
-      if (!body.name || !body.email || !body.whatsapp || !body.countryOfOrigin || !body.countryOfResidence) {
+      // Validate required fields
+      const validation = validateRequired(body, ['name', 'email', 'whatsapp', 'countryOfOrigin', 'countryOfResidence']);
+      if (!validation.valid) {
         return res.status(400).json({ 
-          error: 'Missing required fields' 
+          error: 'Missing required fields',
+          missing: validation.missing
+        });
+      }
+
+      // Validate email format
+      if (!isValidEmail(body.email)) {
+        return res.status(400).json({ 
+          error: 'Invalid email format' 
         });
       }
       
       // Normalize group value
       const groupType = (body.group === 'local' || body.group === 'diaspora') ? body.group : 'diaspora';
       
-      // Prepare data for Supabase
+      // Prepare data for Supabase (sanitize all string fields)
       const registrationData = {
-        name: body.name,
-        email: body.email,
-        whatsapp: body.whatsapp,
-        country_of_origin: body.countryOfOrigin,
-        country_of_residence: body.countryOfResidence,
+        name: sanitizeString(body.name, 200),
+        email: sanitizeString(body.email, 255).toLowerCase(),
+        whatsapp: sanitizeString(body.whatsapp, 50),
+        country_of_origin: sanitizeString(body.countryOfOrigin, 100),
+        country_of_residence: sanitizeString(body.countryOfResidence, 100),
         group_type: groupType,
         ip_address: body.ipAddress || null,
         location: body.location || null,
         status: body.status || 'pending',
-        user_agent: body.userAgent || null,
+        user_agent: body.userAgent ? sanitizeString(body.userAgent, 500) : null,
       };
 
       console.log('Normalized registration data:', JSON.stringify(registrationData, null, 2));
