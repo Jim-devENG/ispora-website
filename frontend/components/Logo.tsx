@@ -12,10 +12,12 @@ interface LogoProps {
 
 export function Logo({ size = 'md', showText = true, className = '', onClick }: LogoProps) {
   const sizeClasses = {
-    sm: 'h-6 w-auto',
-    md: 'h-10 w-auto',
-    lg: 'h-16 w-auto'
+    sm: { container: 'h-6 w-6', text: 'text-[10px]' },
+    md: { container: 'h-10 w-10', text: 'text-xs' },
+    lg: { container: 'h-16 w-16', text: 'text-base' }
   };
+
+  const currentSize = sizeClasses[size];
 
   return (
     <motion.div 
@@ -25,26 +27,28 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
       whileTap={safeAnimate({ scale: 0.95 })}
     >
       <div 
-        className="relative bg-white dark:bg-transparent rounded overflow-hidden"
+        className={cn(
+          "relative bg-primary rounded-full flex items-center justify-center",
+          currentSize.container
+        )}
         style={{
-          backgroundColor: 'white',
-          padding: '2px'
+          backgroundColor: 'hsl(220 100% 40%)', // Brand blue from CSS variables
         }}
       >
-        <img 
-          src="/major icon.jpg" 
-          alt="iSpora Logo" 
-          className={cn(sizeClasses[size])}
-          style={{ 
-            backgroundColor: 'white',
-            mixBlendMode: 'multiply',
-            objectFit: 'contain',
-            imageRendering: 'auto',
-            display: 'block',
-            filter: 'contrast(1.1) brightness(1.05)',
-            WebkitFilter: 'contrast(1.1) brightness(1.05)'
+        <span 
+          className={cn(
+            "text-white font-bold font-mona text-center leading-none",
+            currentSize.text
+          )}
+          style={{
+            fontFamily: 'Mona Sans, Inter, system-ui, -apple-system, sans-serif',
+            fontWeight: 700,
+            letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap'
           }}
-        />
+        >
+          iSpora
+        </span>
       </div>
       {showText && (
         <div className="hidden sm:block ml-3">
