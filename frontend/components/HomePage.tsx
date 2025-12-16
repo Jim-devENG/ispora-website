@@ -23,7 +23,8 @@ import {
   CheckCircle,
   Sparkles,
   GraduationCap,
-  Briefcase
+  Briefcase,
+  MapPin
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -139,19 +140,180 @@ export function HomePage({ onPageChange }: HomePageProps) {
               }
             }}
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              {/* Main Hero Image */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 flex items-center justify-center">
+              {/* Globe image centered */}
               <FloatingImage
-                src="/Collaboration.jpg"
-                alt="Global collaboration and impact"
-                className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-cover"
+                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=90"
+                alt="Globe showing Global South regions: Africa, Caribbean, Latin America, Asia, Middle East, and Oceania"
+                className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-contain opacity-90"
                 delay={0.2}
               />
               
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
-              
-              {/* Faded gradient at bottom */}
+              {/* Modern network overlay with curved connections */}
+              <div className="absolute inset-0 pointer-events-none">
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 1200 600"
+                  preserveAspectRatio="xMidYMid meet"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    {/* Gradient for connection lines */}
+                    <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.6" />
+                      <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.5" />
+                      <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.6" />
+                    </linearGradient>
+                    {/* Glow effect */}
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  {/* Organic curved connection paths between regions */}
+                  <g stroke="url(#connectionGradient)" strokeWidth="2.5" fill="none" opacity="0.75">
+                    {/* Africa to Latin America */}
+                    <path d="M 600 450 Q 450 500 300 450" strokeDasharray="8 4" />
+                    {/* Latin America to Caribbean */}
+                    <path d="M 300 450 Q 280 380 320 320" strokeDasharray="8 4" />
+                    {/* Caribbean to Middle East */}
+                    <path d="M 320 320 Q 500 250 600 200" strokeDasharray="8 4" />
+                    {/* Middle East to Asia */}
+                    <path d="M 600 200 Q 750 250 900 300" strokeDasharray="8 4" />
+                    {/* Asia to Oceania */}
+                    <path d="M 900 300 Q 950 400 1000 450" strokeDasharray="8 4" />
+                    {/* Oceania to Africa */}
+                    <path d="M 1000 450 Q 800 500 600 450" strokeDasharray="8 4" />
+                    {/* Africa to Asia */}
+                    <path d="M 600 450 Q 700 350 900 300" strokeDasharray="8 4" />
+                  </g>
+
+                  {/* Region nodes with glow */}
+                  <g filter="url(#glow)">
+                    <circle cx="300" cy="450" r="8" fill="#3b82f6" opacity="0.8" />
+                    <circle cx="320" cy="320" r="7" fill="#8b5cf6" opacity="0.8" />
+                    <circle cx="600" cy="200" r="7" fill="#06b6d4" opacity="0.8" />
+                    <circle cx="900" cy="300" r="8" fill="#10b981" opacity="0.8" />
+                    <circle cx="1000" cy="450" r="7" fill="#f59e0b" opacity="0.8" />
+                    <circle cx="600" cy="450" r="8" fill="#ef4444" opacity="0.8" />
+                  </g>
+                </svg>
+
+                {/* Map-style location pins and callouts */}
+                <div className="relative w-full h-full">
+                  {/* iSpora - prominent center marker */}
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={safeTransition({ delay: 0.5, type: "spring", stiffness: 200 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary to-blue-600 text-white text-xs font-bold shadow-xl whitespace-nowrap">
+                        iSpora
+                      </div>
+                      <div className="w-4 h-4 bg-primary rounded-full border-2 border-white shadow-lg mx-auto"></div>
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-primary/20 rounded-full -z-10 animate-ping"></div>
+                    </div>
+                  </motion.div>
+
+                  {/* Africa - bottom center - Map pin style */}
+                  <motion.div
+                    className="absolute bottom-[25%] left-1/2 -translate-x-1/2 z-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={safeTransition({ delay: 0.6 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Africa
+                      </div>
+                      <MapPin className="w-6 h-6 text-red-500 fill-red-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+
+                  {/* Latin America - left center - Map pin style */}
+                  <motion.div
+                    className="absolute top-1/2 left-[15%] -translate-y-1/2 z-10"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={safeTransition({ delay: 0.7 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Latin America
+                      </div>
+                      <MapPin className="w-6 h-6 text-blue-500 fill-blue-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+
+                  {/* Caribbean - left upper - Map pin style */}
+                  <motion.div
+                    className="absolute top-[35%] left-[18%] z-10"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={safeTransition({ delay: 0.8 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Caribbean
+                      </div>
+                      <MapPin className="w-6 h-6 text-amber-500 fill-amber-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+
+                  {/* Middle East - center upper - Map pin style */}
+                  <motion.div
+                    className="absolute top-[30%] left-1/2 -translate-x-1/2 z-10"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={safeTransition({ delay: 0.9 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Middle East
+                      </div>
+                      <MapPin className="w-6 h-6 text-cyan-500 fill-cyan-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+
+                  {/* Asia - right center - Map pin style */}
+                  <motion.div
+                    className="absolute top-1/2 right-[20%] -translate-y-1/2 z-10"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={safeTransition({ delay: 1.0 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Asia
+                      </div>
+                      <MapPin className="w-6 h-6 text-green-500 fill-green-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+
+                  {/* Oceania - right lower - Map pin style */}
+                  <motion.div
+                    className="absolute bottom-[20%] right-[22%] z-10"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={safeTransition({ delay: 1.1 })}
+                  >
+                    <div className="relative">
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-white text-xs font-semibold text-slate-700 shadow-md border border-slate-200 whitespace-nowrap">
+                        Oceania
+                      </div>
+                      <MapPin className="w-6 h-6 text-orange-500 fill-orange-500 drop-shadow-lg" />
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Faded gradient at bottom to blend into background */}
               <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background/95 via-background/60 to-transparent" />
             </div>
             
@@ -339,34 +501,34 @@ export function HomePage({ onPageChange }: HomePageProps) {
           <PageHeader
             title="What is iSpora?"
             align="left"
-                  />
-                  
-        <div className="max-w-4xl">
-                    <motion.div 
-            className="space-y-6 text-lg text-muted-foreground leading-relaxed"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: {
-                opacity: 1,
-                y: 0,
-                transition: safeTransition({ duration: 0.6 })
-              }
-            }}
-          >
-            <p>
-              We are building a movement, a network, and a platform to inspire, amplify, and unify diaspora and home-based efforts toward the transformation of Global South nations.
-            </p>
-            <p>
-              From Africa to Latin America, the Caribbean, Asia, the Middle East, and Oceania, we recognize that countless organizations and individuals are already doing meaningful work. However, their efforts remain largely fragmented, limiting scale and collective impact.
-            </p>
-            <p className="font-semibold text-foreground">
-              We believe transformation accelerates when efforts are coordinated.
-            </p>
-          </motion.div>
-        </div>
+          />
+          
+          <div className="max-w-4xl">
+            <motion.div 
+              className="space-y-6 text-lg text-muted-foreground leading-relaxed"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: safeTransition({ duration: 0.6 })
+                }
+              }}
+            >
+              <p>
+                We are building a movement, a network, and a platform to inspire, amplify, and unify diaspora and home-based efforts toward the transformation of Global South nations.
+              </p>
+              <p>
+                Across the Global South — from Africa to Latin America, the Caribbean, Asia, the Middle East, and Oceania — countless organizations and individuals are already doing meaningful work. However, their efforts remain largely fragmented, limiting scale and collective impact.
+              </p>
+              <p className="font-semibold text-foreground">
+                We believe transformation accelerates when efforts are coordinated.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </Section>
 
@@ -452,7 +614,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                   >
                     <Globe className="h-7 w-7" />
                   </motion.div>
-                  <CardTitle className="text-xl font-bold text-white">For Diaspora Professionals</CardTitle>
+                  <CardTitle className="text-xl font-bold text-white">For Diasporans Abroad</CardTitle>
                   <CardDescription className="text-base text-white/90">
                     Diaspora Network
                   </CardDescription>
@@ -533,23 +695,23 @@ export function HomePage({ onPageChange }: HomePageProps) {
         <div className="relative z-10">
           <PageHeader
             title="Our Vision"
-            description="Imagine a unified space where transformation accelerates"
+            description="Imagine a unified space where"
           />
 
           <motion.div
-          className="max-w-4xl mx-auto space-y-6"
+            className="max-w-4xl mx-auto space-y-6"
             initial="hidden"
             whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: safeTransition({ staggerChildren: 0.1, delayChildren: 0.2 })
-            }
-          }}
-        >
-          {[
+            viewport={{ once: true, margin: '-50px' }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: safeTransition({ staggerChildren: 0.1, delayChildren: 0.2 })
+              }
+            }}
+          >
+            {[
             'Impact-driven initiatives across the Global South are concentrated, visible, and empowered.',
             'Youths and everyday citizens can discover opportunities locally and globally — and be inspired to create new ones for others.',
             'Academic institutions reconnect and collaborate with their alumni in the diaspora.',
@@ -631,7 +793,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
               },
               {
                 label: 'Become a Partner',
-                onClick: () => onPageChange('partners'),
+                onClick: () => onPageChange('registration'),
                 variant: 'primary'
               }
             ]}

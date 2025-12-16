@@ -219,7 +219,7 @@ export function MentorshipPage({ onPageChange }: MentorshipPageProps) {
                 <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"> Through Mentorship</span>
               </h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Connect with ambitious youth across Africa and share your knowledge, experience, and guidance. Every session you conduct creates ripples of positive change.
+                Connect with ambitious youth across the Global South and share your knowledge, experience, and guidance. Every session you conduct creates ripples of positive change.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <motion.button 

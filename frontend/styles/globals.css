@@ -28,7 +28,8 @@ body {
   --secondary: 220 67% 67%;
   --secondary-foreground: 222.2 84% 4.9%;
   --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  /* Make all "muted" text fully dark on light (white / light blue) backgrounds */
+  --muted-foreground: 222.2 84% 4.9%;
   --accent: 220 67% 67%;
   --accent-foreground: 222.2 84% 4.9%;
   --destructive: 0 84.2% 60.2%;
@@ -68,7 +69,8 @@ body {
   --secondary: 220 67% 67%;
   --secondary-foreground: 222.2 84% 4.9%;
   --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  /* Slightly stronger contrast for muted-foreground in dark mode */
+  --muted-foreground: 215 20.2% 60%;
   --accent: 220 67% 67%;
   --accent-foreground: 222.2 84% 4.9%;
   --destructive: 0 62.8% 30.6%;

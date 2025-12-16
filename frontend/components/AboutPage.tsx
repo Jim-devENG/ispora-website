@@ -43,20 +43,23 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
     {
       name: 'Oluwaseyi Olawale',
       role: 'Co-Founder & Lead Visionary',
-      bio: 'Oluwaseyi is a serial entrepreneur and founder of Genomac Holdings, a thriving biotechnology company driving innovation across Africa and beyond. As the lead visionary behind the iSpora digital app, he provides strategic oversights and foundational support that sustain the evolution of the iSpora vision. His Genomac Innovation Hub, a subsidiary of Genomac Holdings, currently offers workspace, personnel, and strategic backing to iSpora—serving as a key engine supporting the platform\'s development.',
-      initials: 'OO'
+      bio: 'Oluwaseyi is a serial entrepreneur and founder of Genomac Holdings, a thriving biotechnology company driving innovation across the Global South and beyond. As the lead visionary behind the iSpora digital app, he provides strategic oversights and foundational support that sustain the evolution of the iSpora vision. His Genomac Innovation Hub, a subsidiary of Genomac Holdings, currently offers workspace, personnel, and strategic backing to iSpora—serving as a key engine supporting the platform\'s development.',
+      initials: 'OO',
+      avatarSrc: '/Mr Seyi.jpg'
     },
     {
       name: 'Elijah Jesuseye Ogunyale',
       role: 'Co-Founder & CEO',
-      bio: 'Elijah is a passionate youth leader and founder of EmQuip Leadership Trainers & Development Partners Limited, with a bold vision for African and Global South leadership transformation. His unique passion for the African Diaspora, leadership development, and national growth fuels iSpora\'s mission. As the founding CEO of iSpora, he drives community-building, leadership, and strategic ideation, shaping the movement and ensuring its alignment with the broader vision of Global South development.',
-      initials: 'EO'
+      bio: 'Elijah is a passionate youth leader and founder of EmQuip Leadership Trainers & Development Partners Limited, with a bold vision for Global South leadership transformation. His unique passion for the Global South Diaspora, leadership development, and national growth fuels iSpora\'s mission. As the founding CEO of iSpora, he drives community-building, leadership, and strategic ideation, shaping the movement and ensuring its alignment with the broader vision of Global South development.',
+      initials: 'EO',
+      avatarSrc: '/Mr Elijah.jpg'
     },
     {
       name: 'James Enietan',
       role: 'Co-Founder & Chief Technology Officer (CTO)',
       bio: 'James Enietan is a multi-disciplinary builder — a software developer, brand architect, and founder shaping people, platforms, and products. With over a decade in tech, he has designed systems, built digital products, and advised initiatives across faith, leadership, and execution. He leads Teqxure, a solutions company evolving into a builder ecosystem, and founded Kingdom Light Bearers, a discipleship movement equipping believers to influence culture. He also co-founded Crysgarage, an online sound-mastering platform, and established The VisionSmith, a productivity and influence community. His work spans spiritual leadership, tech innovation, and organizational development — focused on building people and systems that outlast him.',
-      initials: 'JE'
+      initials: 'JE',
+      avatarSrc: '/Mr Jimmy.png'
     }
   ];
 
@@ -230,7 +233,14 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                 <div className={cn("relative z-10", index === 1 && "text-white")}>
                   <CardHeader>
                     <div className="flex flex-col items-center text-center mb-4">
-                      <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20">
+                      <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20 overflow-hidden">
+                        {member.avatarSrc && (
+                          <AvatarImage
+                            src={member.avatarSrc}
+                            alt={member.name}
+                            className="object-cover object-top"
+                          />
+                        )}
                         <AvatarFallback className={cn(
                           "text-2xl font-bold",
                           index === 1 
@@ -271,10 +281,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
 
       {/* CTA Section */}
       <Section 
-        className="relative"
-            style={{
-          background: 'linear-gradient(135deg, hsl(220 100% 92%) 0%, hsl(220 67% 88%) 50%, hsl(220 100% 91%) 100%)'
-            }}
+        className="relative bg-white"
       >
           <motion.div
           className="text-center max-w-3xl mx-auto"
@@ -290,17 +297,17 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             }
           }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">
             Join Us in Building the Future
           </h2>
-          <p className="text-lg text-white/90 mb-8 leading-relaxed">
+          <p className="text-lg text-black mb-8 leading-relaxed">
             Whether you're a youth leader, diaspora professional, or impact-driven organization, 
             there's a place for you in the iSpora ecosystem.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              variant="secondary"
+              variant="default"
               onClick={() => onPageChange('community')}
               className="h-12 px-8"
             >
@@ -311,7 +318,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
               size="lg"
               variant="outline"
               onClick={() => onPageChange('partners')}
-              className="h-12 px-8 bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="h-12 px-8 text-black border-black/20 hover:bg-black/5"
             >
               Become a Partner
             </Button>

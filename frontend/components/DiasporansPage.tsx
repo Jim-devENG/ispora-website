@@ -163,7 +163,7 @@ export function DiasporansPage({ onPageChange }: DiasporansPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <Badge className="mb-4 bg-accent/10 text-accent-foreground border-accent/20">
-                For African Diaspora Leaders
+                For Global South Diasporans Abroad
               </Badge>
               <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
                 Your Expertise Can

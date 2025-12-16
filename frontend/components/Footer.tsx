@@ -172,7 +172,7 @@ export function Footer({ onPageChange }: FooterProps) {
             </motion.div>
             
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Connecting African diaspora professionals with youth back home to build impact-driven projects that transform communities and create lasting change.
+              Connecting the global south diaspora with organizations and youths back home to build impact-driven projects that transform communities and create lasting change.
             </p>
             
             <div className="flex space-x-4">
@@ -262,14 +262,14 @@ export function Footer({ onPageChange }: FooterProps) {
             className="flex items-center space-x-2 mb-4 md:mb-0"
             variants={itemVariants}
           >
-                            <span className="text-muted-foreground">© 2025 iSpora. Built with</span>
+            <span className="text-muted-foreground">© 2025 iSpora. Built with</span>
             <motion.div
               animate={safeAnimate({ scale: [1, 1.2, 1] })}
               transition={safeTransition({ duration: 2, repeat: 999999, ease: "easeInOut" })}
             >
               <Heart className="h-4 w-4 text-red-500" />
             </motion.div>
-            <span className="text-muted-foreground">for Africa's future.</span>
+            <span className="text-muted-foreground">for the Global South&apos;s future.</span>
           </motion.div>
           
           <motion.div 

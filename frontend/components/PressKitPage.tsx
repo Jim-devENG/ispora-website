@@ -98,7 +98,7 @@ export function PressKitPage({ onPageChange }: PressKitPageProps) {
                 iSpora is a Global Impact Engine for the Global South, connecting diaspora professionals with youth in their home countries to create meaningful, lasting impact through mentorship, collaboration, and shared projects.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our platform facilitates connections, enables knowledge transfer, and supports initiatives that drive positive change across Africa and the Global South.
+                Our platform facilitates connections, enables knowledge transfer, and supports initiatives that drive positive change across the Global South.
               </p>
             </CardContent>
           </Card>

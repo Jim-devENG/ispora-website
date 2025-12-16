@@ -30,7 +30,8 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <GraduationCap className="h-8 w-8" />,
       title: 'Seminars, Training & Development',
       description: 'Capacity-building programmes for youths, organizations and communities',
-      image: '/conference.jpg',
+      // Seminars and training in a balanced classroom setting
+      image: 'https://images.pexels.com/photos/1181400/pexels-photo-1181400.jpeg',
       outcomes: [
         'Enhanced skills and competencies for youth and professionals',
         'Strengthened organizational capacity and effectiveness',
@@ -42,7 +43,8 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Building className="h-8 w-8" />,
       title: 'Government & Policy Stakeholders Advisory',
       description: 'Strategic Advisory for Institutions working on development-focused initiatives',
-      image: '/academy.jpg',
+      // Policy and government advisory roundtable
+      image: 'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg',
       outcomes: [
         'Evidence-based policy recommendations',
         'Strategic planning and program design support',
@@ -54,7 +56,8 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Network className="h-8 w-8" />,
       title: 'National Growth and Development Partnership',
       description: 'Collaboration with national and regional bodies to accelerate transformation',
-      image: '/Collaboration.jpg',
+      // National development and partnership collaboration
+      image: 'https://images.pexels.com/photos/1181355/pexels-photo-1181355.jpeg',
       outcomes: [
         'Coordinated development initiatives across sectors',
         'Leveraged diaspora expertise for national priorities',
@@ -66,7 +69,8 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Users className="h-8 w-8" />,
       title: 'Leadership & Collaboration for Diaspora-led Initiatives',
       description: 'Connecting diaspora-led movements with local organizations for shared impact',
-      image: '/communinty.jpg',
+      // Diaspora leaders and community collaboration
+      image: 'https://images.pexels.com/photos/1181716/pexels-photo-1181716.jpeg',
       outcomes: [
         'Bridged diaspora-local collaboration gaps',
         'Amplified impact through coordinated efforts',
@@ -78,7 +82,8 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Target className="h-8 w-8" />,
       title: 'Impact Partnership Support',
       description: 'We help impact initiatives amplify reach, visibility and measurable impact',
-      image: '/Career.jpg',
+      // Impact measurement and partnership results
+      image: 'https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg',
       outcomes: [
         'Increased visibility and recognition for initiatives',
         'Expanded reach to target communities',

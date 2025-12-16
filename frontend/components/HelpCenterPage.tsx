@@ -43,7 +43,7 @@ export function HelpCenterPage({ onPageChange }: HelpCenterPageProps) {
     {
       category: 'getting-started',
       question: 'What is the difference between Local Community and Diaspora Network?',
-      answer: 'Local Community is for youth and professionals based in the Global South. Diaspora Network is for professionals of African descent living outside the continent who want to give back through mentorship and collaboration.'
+      answer: 'Local Community is for youth and professionals based in the Global South. Diaspora Network is for professionals from the Global South living abroad who want to give back through mentorship and collaboration.'
     },
     {
       category: 'account',

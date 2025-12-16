@@ -219,7 +219,7 @@ export function ProjectsPage({ onPageChange }: ProjectsPageProps) {
               Active Impact Projects
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-3xl mx-auto">
-              Discover ongoing projects across Africa where diaspora leaders are creating meaningful change with local youth.
+              Discover ongoing projects across the Global South where diaspora leaders are creating meaningful change with local youth.
             </p>
           </div>
         </div>
@@ -421,7 +421,7 @@ export function ProjectsPage({ onPageChange }: ProjectsPageProps) {
             Ready to Launch Your Own Project?
           </h2>
           <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto">
-            Join our community of diaspora leaders who are creating meaningful change across Africa.
+            Join our community of diaspora leaders who are creating meaningful change across the Global South.
           </p>
           <div className="mt-10">
             <Button size="lg" variant="secondary" onClick={() => onPageChange('diasporans')}>

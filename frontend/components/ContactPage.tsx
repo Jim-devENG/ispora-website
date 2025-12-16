@@ -95,7 +95,7 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
     {
       icon: <Globe className="h-6 w-6" />,
       title: 'Global Reach',
-      description: 'Active in 15+ African countries',
+      description: 'Active in 15+ Global South countries',
       value: 'Diaspora communities worldwide',
       badge: { text: 'Global', color: 'bg-purple-100 text-purple-800' }
     }
