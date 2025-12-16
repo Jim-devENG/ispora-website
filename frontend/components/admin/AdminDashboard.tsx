@@ -155,7 +155,7 @@ export function AdminDashboard() {
     setStatsLoading(true);
     setStatsError(null);
     try {
-      const data = await fetchJson<DashboardStatsResponse>('/api/dashboard/stats');
+      const data = await fetchJson<DashboardStatsResponse>('/api/registrations?stats=true');
       setStats({
         totalRegistrations: data.totalRegistrations,
         todayRegistrations: data.todayRegistrations,
