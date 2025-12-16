@@ -29,6 +29,8 @@ interface PartnersPageProps {
 }
 
 export function PartnersPage({ onPageChange }: PartnersPageProps) {
+  const formRef = React.useRef<HTMLDivElement>(null);
+
   const [formData, setFormData] = useState({
     // Contact Information
     fullName: '',
@@ -216,7 +218,9 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
 
       {/* Partnership Interest Form */}
       <Section 
-        className="relative"
+        ref={formRef}
+        id="partnership-form"
+        className="relative scroll-mt-24"
         style={{
           background: 'linear-gradient(90deg, hsl(220 100% 94%) 0%, hsl(220 67% 90%) 50%, hsl(220 100% 93%) 100%)'
         }}

@@ -35,7 +35,7 @@ import { safeAnimate, safeTransition } from './utils/animationUtils';
 import { cn } from './ui/utils';
 
 interface AboutPageProps {
-  onPageChange: (page: string) => void;
+  onPageChange: (page: string, scrollTarget?: string) => void;
 }
 
 export function AboutPage({ onPageChange }: AboutPageProps) {
@@ -317,7 +317,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => onPageChange('partners')}
+              onClick={() => onPageChange('partners', 'partnership-form')}
               className="h-12 px-8 text-black border-black/20 hover:bg-black/5"
             >
               Become a Partner

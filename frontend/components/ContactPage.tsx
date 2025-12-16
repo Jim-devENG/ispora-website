@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
+import { cn } from './ui/utils';
 import { 
   Mail, 
   MessageSquare, 
@@ -95,9 +96,9 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
     {
       icon: <Globe className="h-6 w-6" />,
       title: 'Global Reach',
-      description: 'Active in 15+ Global South countries',
+      description: 'Expanding across Global South countries',
       value: 'Diaspora communities worldwide',
-      badge: { text: 'Global', color: 'bg-purple-100 text-purple-800' }
+      badge: { text: 'Growing', color: 'bg-purple-100 text-purple-800' }
     }
   ];
 
@@ -157,16 +158,35 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {contactMethods.map((method, index) => (
-              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow">
+              <Card key={index} className={cn(
+                "text-center p-6 hover:shadow-lg transition-shadow border-2",
+                index === 0 || index === 2
+                  ? "bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 border-blue-700 text-white"
+                  : "border-primary/10 bg-gradient-to-br from-card to-primary/5"
+              )}>
                 <div className="flex items-center justify-center mb-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <div className={cn(
+                    "h-12 w-12 rounded-full flex items-center justify-center",
+                    index === 0 || index === 2
+                      ? "bg-white/20 text-white"
+                      : "bg-primary/10 text-primary"
+                  )}>
                     {method.icon}
                   </div>
                 </div>
-                <h3 className="font-semibold mb-2 text-foreground">{method.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{method.description}</p>
-                <p className="font-medium text-sm mb-3 text-foreground">{method.value}</p>
-                <Badge className={method.badge.color}>{method.badge.text}</Badge>
+                <h3 className={cn(
+                  "font-semibold mb-2",
+                  index === 0 || index === 2 ? "text-white" : "text-foreground"
+                )}>{method.title}</h3>
+                <p className={cn(
+                  "text-sm mb-3",
+                  index === 0 || index === 2 ? "text-white/90" : "text-muted-foreground"
+                )}>{method.description}</p>
+                <p className={cn(
+                  "font-medium text-sm mb-3",
+                  index === 0 || index === 2 ? "text-white" : "text-foreground"
+                )}>{method.value}</p>
+                <Badge className={index === 0 || index === 2 ? "bg-white/20 text-white border-white/30" : method.badge.color}>{method.badge.text}</Badge>
               </Card>
             ))}
           </div>
@@ -179,7 +199,7 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <Card className="p-8">
+              <Card className="p-8 border-2 border-primary/10 bg-gradient-to-br from-card to-primary/5">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
@@ -299,7 +319,7 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
 
             {/* Sidebar Information */}
             <div className="space-y-6">
-              <Card className="p-6">
+              <Card className="p-6 border-2 border-primary/10 bg-gradient-to-br from-card to-secondary/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center">
                     <Headphones className="mr-2 h-5 w-5 text-secondary" />
@@ -387,7 +407,7 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
                 answer: "We provide training resources, matching support, progress tracking tools, and a dedicated community of experienced mentors for peer support."
               }
             ].map((faq, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="hover:shadow-lg transition-shadow border-2 border-primary/10 bg-gradient-to-br from-card to-primary/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-start">
                     <MessageCircle className="h-5 w-5 text-primary mr-2 mt-1 flex-shrink-0" />

@@ -85,15 +85,24 @@ function AppContent() {
     return () => window.removeEventListener('popstate', applyPath);
   }, []);
 
-  const handlePageChange = (page: string) => {
+  const handlePageChange = (page: string, scrollTarget?: string) => {
     // Update URL path for direct navigation/bookmarks
     if (typeof window !== 'undefined') {
       const newPath = page === 'home' ? '/' : `/${page}`;
       window.history.pushState({}, '', newPath);
     }
     setCurrentPage(page);
-    // Scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to target if specified, otherwise scroll to top
+    if (scrollTarget) {
+      setTimeout(() => {
+        const element = document.getElementById(scrollTarget);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleAdminAccess = () => {

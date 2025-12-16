@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 interface HomePageProps {
-  onPageChange: (page: string) => void;
+  onPageChange: (page: string, scrollTarget?: string) => void;
 }
 
 export function HomePage({ onPageChange }: HomePageProps) {
@@ -793,7 +793,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
               },
               {
                 label: 'Become a Partner',
-                onClick: () => onPageChange('registration'),
+                onClick: () => onPageChange('partners', 'partnership-form'),
                 variant: 'primary'
               }
             ]}
