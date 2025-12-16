@@ -404,11 +404,11 @@ export function FeaturesPage({ onPageChange }: FeaturesPageProps) {
             Join our community and be part of building the future of diaspora-youth collaboration.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" variant="secondary" onClick={() => onPageChange('join')}>
+            <Button size="lg" variant="secondary" onClick={() => onPageChange('registration')}>
               <Globe className="mr-2 h-5 w-5" />
               Join as Diaspora
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('join')}>
+            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('registration')}>
               <Target className="mr-2 h-5 w-5" />
               Join as Youth
             </Button>

@@ -42,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const body = sanitizeObject(req.body || {});
       
       // Validate required fields
-      const validation = validateRequired(body, ['name', 'email', 'whatsapp', 'countryOfOrigin', 'countryOfResidence']);
+      const validation = validateRequired(body, ['name', 'email', 'whatsapp', 'countryOfResidence']);
       if (!validation.valid) {
         return res.status(400).json({ 
           error: 'Missing required fields',
@@ -65,7 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         name: sanitizeString(body.name, 200),
         email: sanitizeString(body.email, 255).toLowerCase(),
         whatsapp: sanitizeString(body.whatsapp, 50),
-        country_of_origin: sanitizeString(body.countryOfOrigin, 100),
+        country_of_origin: body.countryOfOrigin ? sanitizeString(body.countryOfOrigin, 100) : sanitizeString(body.countryOfResidence, 100), // Use residence as fallback
         country_of_residence: sanitizeString(body.countryOfResidence, 100),
         group_type: groupType,
         ip_address: body.ipAddress || null,

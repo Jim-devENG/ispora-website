@@ -32,7 +32,7 @@ interface MentorshipPageProps {
   onPageChange: (page: string) => void;
 }
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export function MentorshipPage({ onPageChange }: MentorshipPageProps) {
   const mentorshipTypes = [

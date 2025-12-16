@@ -152,7 +152,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
                   <Button
                     size="lg"
                     className="w-full h-12 text-base font-medium"
-                    onClick={() => onPageChange('join')}
+                    onClick={() => onPageChange('registration')}
                   >
                     Join the Local Community
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -244,7 +244,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
                     size="lg"
                     variant="secondary"
                     className="w-full h-12 text-base font-medium bg-white text-primary hover:bg-white/90"
-                    onClick={() => onPageChange('join')}
+                    onClick={() => onPageChange('registration')}
                   >
                     Join the Diaspora Network
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -257,7 +257,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
         </div>
       </Section>
 
-      {/* WhatsApp & Telegram Links */}
+      {/* Registration CTA */}
       <Section 
         className="relative"
         style={{
@@ -265,7 +265,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
         }}
       >
         <motion.div
-          className="max-w-4xl mx-auto"
+          className="max-w-4xl mx-auto text-center"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
@@ -278,55 +278,20 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
             }
           }}
         >
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-            Join Our Community Channels
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+            Ready to Join?
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="hover:shadow-lg transition-shadow border-primary/10 hover:border-primary/30 hover:bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-xl">Local Community</CardTitle>
-                <CardDescription>Connect with youth and professionals in the Global South</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => window.open('https://chat.whatsapp.com/I9utNeip977H5k8oGW5KCy', '_blank')}
-                >
-                  WhatsApp
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {/* Add Telegram link */}}
-                >
-                  Telegram
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="hover:shadow-lg transition-shadow border-primary/10 hover:border-primary/30 hover:bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-xl">Diaspora Network</CardTitle>
-                <CardDescription>Connect with diaspora professionals worldwide</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => window.open('https://chat.whatsapp.com/CVWXWSeSfuKFj5UFmj6ESL', '_blank')}
-                >
-                  WhatsApp
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {/* Add Telegram link */}}
-                >
-                  Telegram
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Fill out our registration form to join our WhatsApp community. You'll be redirected to the appropriate group after completing the form.
+          </p>
+          <Button
+            size="lg"
+            className="h-12 px-8 text-base font-medium"
+            onClick={() => onPageChange('registration')}
+          >
+            Join Our Community
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </motion.div>
       </Section>
     </div>

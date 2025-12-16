@@ -59,7 +59,7 @@ function AppContent() {
   React.useEffect(() => {
     // Support both old and new page routes for backward compatibility
     const validPages = [
-      'home', 'about', 'services', 'impact', 'contact', 'register', 'admin',
+      'home', 'about', 'services', 'impact', 'contact', 'register', 'registration', 'admin',
       'community', 'partners', 'app', 'join', 'blog', 'webinars',
       'features', 'projects', 'diasporans', 'youth', 'mentorship',
       'help', 'guidelines', 'privacy', 'terms', 'presskit', 'careers'
@@ -123,7 +123,7 @@ function AppContent() {
       case 'contact':
         return <ContactPage onPageChange={handlePageChange} />;
       case 'register':
-        // Legacy route - redirect to join
+      case 'registration':
         return <RegistrationPage onPageChange={handlePageChange} />;
       case 'community':
         return <CommunityPage onPageChange={handlePageChange} />;

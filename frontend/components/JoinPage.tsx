@@ -1,31 +1,18 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Checkbox } from './ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Badge } from './ui/badge';
-import { safeAnimate, safeTransition } from './utils/animationUtils';
-import { Section } from './layout/Section';
-import { PageHeader } from './layout/PageHeader';
-import { 
-  Users,
-  Globe,
-  Send,
-  Loader2,
-  CheckCircle
-} from 'lucide-react';
+import React, { useEffect } from 'react';
+import { UnifiedRegistrationForm } from './UnifiedRegistrationForm';
 
 interface JoinPageProps {
   onPageChange: (page: string) => void;
 }
 
 export function JoinPage({ onPageChange }: JoinPageProps) {
+  // Redirect to registration page (which uses UnifiedRegistrationForm)
+  useEffect(() => {
+    onPageChange('registration');
+  }, [onPageChange]);
+
+  // Show unified form as fallback
+  return <UnifiedRegistrationForm showHeader={true} />;
   const [diasporaFormData, setDiasporaFormData] = useState({
     fullName: '',
     email: '',

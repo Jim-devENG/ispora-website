@@ -250,7 +250,11 @@ export const registrationService = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Failed to submit registration');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || errorData.message || `Failed to submit registration (${response.status})`;
+        throw new Error(errorMessage);
+      }
       return await response.json();
     }
     const status = Math.random() > 0.7 ? 'active' : Math.random() > 0.5 ? 'verified' : 'pending';
