@@ -17,6 +17,7 @@ import type {
   Event,
   Partner,
   JoinRequest,
+  Contact,
   DashboardStatsResponse,
   BlogPostsResponse,
   EventsResponse,
@@ -28,6 +29,7 @@ import { BlogTab } from './tabs/BlogTab';
 import { EventsTab } from './tabs/EventsTab';
 import { PartnersTab } from './tabs/PartnersTab';
 import { JoinTab } from './tabs/JoinTab';
+import { ContactTab } from './tabs/ContactTab';
 import {
   LayoutDashboard,
   Users,
@@ -35,12 +37,13 @@ import {
   Calendar,
   Handshake,
   UserPlus,
+  Mail,
   LogOut,
   Menu,
   X,
 } from 'lucide-react';
 
-type TabId = 'overview' | 'registrations' | 'blog' | 'events' | 'partners' | 'join';
+type TabId = 'overview' | 'registrations' | 'blog' | 'events' | 'partners' | 'join' | 'contact';
 
 interface NavItem {
   id: TabId;
@@ -55,6 +58,7 @@ const navItems: NavItem[] = [
   { id: 'events', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
   { id: 'partners', label: 'Partners', icon: <Handshake className="h-5 w-5" /> },
   { id: 'join', label: 'Join Requests', icon: <UserPlus className="h-5 w-5" /> },
+  { id: 'contact', label: 'Contact', icon: <Mail className="h-5 w-5" /> },
 ];
 
 export function AdminDashboard() {
@@ -92,6 +96,11 @@ export function AdminDashboard() {
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
   const [joinLoading, setJoinLoading] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
+
+  // Contact submissions state
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState(false);
+  const [contactsError, setContactsError] = useState<string | null>(null);
 
   // Check authentication on mount
   useEffect(() => {
@@ -135,6 +144,9 @@ export function AdminDashboard() {
     }
     if (activeTab === 'join' && joinRequests.length === 0 && !joinLoading && !joinError) {
       loadJoinRequests();
+    }
+    if (activeTab === 'contact' && contacts.length === 0 && !contactsLoading && !contactsError) {
+      loadContacts();
     }
   }, [activeTab, isAuthenticated]);
 
@@ -211,8 +223,8 @@ export function AdminDashboard() {
     setPartnersLoading(true);
     setPartnersError(null);
     try {
-      const data = await fetchJson<{ partners: Partner[] }>('/api/partners');
-      setPartners(data.partners || []);
+      const data = await fetchJson<Partner[]>('/api/partners');
+      setPartners(data || []);
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load partners:', err);
       setPartnersError(err.message || 'Failed to load partners');
@@ -233,6 +245,21 @@ export function AdminDashboard() {
       setJoinError(err.message || 'Failed to load join requests');
     } finally {
       setJoinLoading(false);
+    }
+  };
+
+  // Load contact submissions
+  const loadContacts = async () => {
+    setContactsLoading(true);
+    setContactsError(null);
+    try {
+      const data = await fetchJson<Contact[]>('/api/contact');
+      setContacts(data || []);
+    } catch (err: any) {
+      console.error('[AdminDashboard] Failed to load contacts:', err);
+      setContactsError(err.message || 'Failed to load contact submissions');
+    } finally {
+      setContactsLoading(false);
     }
   };
 
@@ -261,6 +288,8 @@ export function AdminDashboard() {
       loadPartners();
     } else if (activeTab === 'join') {
       loadJoinRequests();
+    } else if (activeTab === 'contact') {
+      loadContacts();
     }
   };
 
@@ -402,6 +431,16 @@ export function AdminDashboard() {
               setJoinRequests={setJoinRequests}
               loading={joinLoading}
               error={joinError}
+              onRefresh={handleRefresh}
+            />
+          )}
+
+          {activeTab === 'contact' && (
+            <ContactTab
+              contacts={contacts}
+              setContacts={setContacts}
+              loading={contactsLoading}
+              error={contactsError}
               onRefresh={handleRefresh}
             />
           )}

@@ -82,6 +82,21 @@ export interface JoinRequest {
   updated_at?: string;
 }
 
+export type ContactStatus = 'new' | 'read' | 'replied' | 'archived';
+
+export interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  role?: string | null;
+  message: string;
+  status: ContactStatus;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DashboardStats {
   totalRegistrations: number;
   todayRegistrations: number;

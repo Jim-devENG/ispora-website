@@ -144,6 +144,19 @@ async function handleUpdate(
     updateData.cover_image_url = body.cover_image_url || body.coverImageUrl || body.image_url || body.imageUrl || null;
   }
 
+  // Automatically set status to 'archived' if start_at is in the past
+  // This ensures past events are automatically moved to archived status
+  const finalStartAt = updateData.start_at ? new Date(updateData.start_at) : new Date(existing.start_at);
+  const now = new Date();
+  if (finalStartAt < now) {
+    // If date is in the past, automatically archive (unless explicitly set to draft)
+    // This ensures past events don't show in upcoming events queries
+    if (updateData.status === undefined || updateData.status === 'published') {
+      updateData.status = 'archived';
+      console.log(`[EVENTS_PATCH_ID] Auto-archiving event ${id} - start_at (${finalStartAt.toISOString()}) is in the past`);
+    }
+  }
+
   // updated_at is set automatically by trigger
 
   console.log(`[EVENTS_PATCH_ID] Updating with data:`, { ...updateData, description: updateData.description ? '[truncated]' : undefined });

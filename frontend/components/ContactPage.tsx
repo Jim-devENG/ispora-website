@@ -46,7 +46,17 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
     setSubmitStatus('idle');
 
     try {
-             const response = await fetch('https://formspree.io/f/meozdbrv', {
+      // Get IP address
+      let ipAddress = '';
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        ipAddress = ipData.ip;
+      } catch (err) {
+        console.warn('Could not fetch IP address:', err);
+      }
+
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +66,8 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
           email: formData.email,
           role: formData.role,
           message: formData.message,
-          _subject: `Contact from ${formData.name} - ${formData.role}`,
+          ipAddress,
+          userAgent: navigator.userAgent,
         }),
       });
 
@@ -69,9 +80,12 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
           message: ''
         });
       } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Contact form submission error:', errorData);
         setSubmitStatus('error');
       }
     } catch (error) {
+      console.error('Contact form submission error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
