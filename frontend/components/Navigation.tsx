@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { motion, AnimatePresence } from 'motion/react';
-import { useTheme } from './ThemeProvider';
 import { Logo } from './Logo';
 import { 
   Menu, 
-  X, 
-  Sun,
-  Moon,
+  X,
   ChevronDown
 } from 'lucide-react';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
@@ -20,7 +17,6 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onPageChange }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const navigationItems = [
     { id: 'home', label: 'Home' },
@@ -81,19 +77,6 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
             >
               Join Us
             </Button>
-
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </button>
 
             {/* Mobile Menu Button */}
             <button
