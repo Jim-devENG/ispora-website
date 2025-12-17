@@ -71,7 +71,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
           <div className="flex items-center gap-4">
             {/* Join Button */}
             <Button
-              onClick={() => onPageChange('registration')}
+              onClick={() => onPageChange('join')}
               className="hidden md:inline-flex"
               size="sm"
             >
@@ -122,16 +122,16 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
                   {item.label}
                 </button>
               ))}
-              <Button
-                onClick={() => {
-                  onPageChange('registration');
-                  setIsMenuOpen(false);
-                }}
-                className="w-full mt-4"
-                size="sm"
-              >
-                Join Us
-              </Button>
+                  <Button
+                    onClick={() => {
+                      onPageChange('join');
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full mt-4"
+                    size="sm"
+                  >
+                    Join Us
+                  </Button>
             </div>
           </motion.div>
         )}
