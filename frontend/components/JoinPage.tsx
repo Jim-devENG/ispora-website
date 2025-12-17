@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
 import { Textarea } from './ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Section } from './layout/Section';
 import { PageHeader } from './layout/PageHeader';
@@ -141,7 +140,7 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [activeTab, setActiveTab] = useState<'local' | 'diaspora'>('local');
+  const [activeTab, setActiveTab] = useState<'local' | 'diaspora' | ''>('');
 
   // Get available countries and cities based on tab
   const availableCountries = activeTab === 'local' ? globalSouthCountries : diasporaCountries;
@@ -327,20 +326,8 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
             </CardContent>
           </Card>
 
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'local' | 'diaspora')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="diaspora" className="flex items-center space-x-2">
-                <Globe className="h-4 w-4" />
-                <span>Diaspora Network</span>
-              </TabsTrigger>
-              <TabsTrigger value="local" className="flex items-center space-x-2">
-                <Users className="h-4 w-4" />
-                <span>Local Community</span>
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Diaspora Community Form */}
-            <TabsContent value="diaspora">
+              {/* Diaspora Community Form */}
+              {activeTab === 'diaspora' && (
               <Card className="shadow-xl border-primary/10">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-2">
@@ -378,6 +365,7 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="d-phone">Phone Number (optional)</Label>
+                          <p className="text-sm text-muted-foreground">Include country code if outside your country of residence</p>
                           <Input
                             id="d-phone"
                             type="tel"
@@ -409,14 +397,13 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                         </div>
                         {diasporaFormData.selectedCountry && (
                           <div className="space-y-2">
-                            <Label htmlFor="d-location">Location/City *</Label>
+                            <Label htmlFor="d-location">City (optional)</Label>
                             <Select
                               value={diasporaFormData.selectedLocation}
                               onValueChange={(value) => handleDiasporaInputChange('selectedLocation', value)}
-                              required
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select location/city" />
+                                <SelectValue placeholder="Select city" />
                               </SelectTrigger>
                               <SelectContent className="max-h-[300px]">
                                 {diasporaCountries.find(c => c.code === diasporaFormData.selectedCountry)?.cities.map((city) => (
@@ -527,7 +514,7 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
 
                     {/* 4. Expectations */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">4. What are your expectations for joining our Diaspora Community?</h3>
+                      <h3 className="text-lg font-semibold">4. What are your expectations for joining our Diaspora Community? *</h3>
                       <div className="space-y-2">
                         <Label htmlFor="d-expectations">(Short answer) *</Label>
                         <Textarea
@@ -569,10 +556,10 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                   </form>
                 </CardContent>
               </Card>
-            </TabsContent>
+              )}
 
-            {/* Local Community Form */}
-            <TabsContent value="local">
+              {/* Local Community Form */}
+              {activeTab === 'local' && (
               <Card className="shadow-xl border-primary/10">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-2">
@@ -610,6 +597,7 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="l-phone">Phone Number / WhatsApp Number *</Label>
+                          <p className="text-sm text-muted-foreground">Include country code</p>
                           <Input
                             id="l-phone"
                             type="tel"
@@ -642,14 +630,13 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                         </div>
                         {localFormData.selectedCountry && (
                           <div className="space-y-2">
-                            <Label htmlFor="l-location">Location/City *</Label>
+                            <Label htmlFor="l-location">City (optional)</Label>
                             <Select
                               value={localFormData.selectedLocation}
                               onValueChange={(value) => handleLocalInputChange('selectedLocation', value)}
-                              required
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select location/city" />
+                                <SelectValue placeholder="Select city" />
                               </SelectTrigger>
                               <SelectContent className="max-h-[300px]">
                                 {globalSouthCountries.find(c => c.code === localFormData.selectedCountry)?.cities.map((city) => (
@@ -662,11 +649,12 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                           </div>
                         )}
                         <div className="space-y-2">
-                          <Label htmlFor="l-state">State / Region (optional)</Label>
+                          <Label htmlFor="l-state">State / Region *</Label>
                           <Input
                             id="l-state"
                             value={localFormData.state}
                             onChange={(e) => handleLocalInputChange('state', e.target.value)}
+                            required
                           />
                         </div>
                         <div className="space-y-2">
@@ -779,8 +767,9 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
 
                     {/* 4. Expectations */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">4. What are your expectations for joining our Local Community?</h3>
+                      <h3 className="text-lg font-semibold">4. What are your expectations for joining our Local Community? *</h3>
                       <div className="space-y-2">
+                        <Label htmlFor="l-expectations">(Short answer) *</Label>
                         <Textarea
                           id="l-expectations"
                           value={localFormData.expectations}
@@ -820,8 +809,9 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
                   </form>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
+              )}
+            </>
+          )}
         </div>
       </Section>
     </div>
