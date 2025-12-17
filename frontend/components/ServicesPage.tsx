@@ -108,7 +108,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
         <div className="relative z-10">
           <PageHeader
             title="Our Services"
-            description="iSpora offers strategic services designed to accelerate development impact across the Global South through diaspora collaboration, capacity building, and institutional partnerships."
+            description="Beyond the iSpora digital impact engine app, we offer strategic services aimed at accelerating developmental impact across the global south through diaspora collaboration, capacity building and institutional partnership."
           />
         </div>
       </Section>

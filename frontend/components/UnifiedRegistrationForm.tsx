@@ -296,7 +296,7 @@ export function UnifiedRegistrationForm({ showHeader = true }: UnifiedRegistrati
                 {/* Community Type Selection */}
                 <div className="space-y-2">
                   <Label htmlFor="communityType" className="text-sm font-medium text-foreground">
-                    I am a... *
+                    I am… *
                   </Label>
                   <Select
                     value={communityType}
@@ -308,10 +308,10 @@ export function UnifiedRegistrationForm({ showHeader = true }: UnifiedRegistrati
                     required
                   >
                     <SelectTrigger className="h-10 text-sm">
-                      <SelectValue placeholder="Select community type" />
+                      <SelectValue placeholder="Select where you are based" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="local">Local Community (Global South)</SelectItem>
+                      <SelectItem value="local">Home-based (Global South)</SelectItem>
                       <SelectItem value="diaspora">Diasporan (Outside Global South)</SelectItem>
                     </SelectContent>
                   </Select>
