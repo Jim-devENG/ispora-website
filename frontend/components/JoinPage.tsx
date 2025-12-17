@@ -329,18 +329,7 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
         countryOfResidence: localFormData.selectedCountry,
         ipAddress,
         location: locationData,
-        group: 'local' as const,
-        // Additional detailed data (stored in a separate field if backend supports it)
-        additionalData: {
-          state: localFormData.state,
-          ageRange: localFormData.ageRange,
-          background: localFormData.background,
-          fieldOfStudy: localFormData.fieldOfStudy,
-          interests: localFormData.interests,
-          otherInterest: localFormData.otherInterest,
-          expectations: localFormData.expectations,
-          selectedLocation: localFormData.selectedLocation
-        }
+        group: 'local' as const
       };
 
       await registrationService.submitRegistration(payload);
