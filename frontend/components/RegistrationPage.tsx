@@ -1,16 +1,10 @@
 import React from 'react';
-import { UnifiedRegistrationForm } from './UnifiedRegistrationForm';
+import { JoinPage } from './JoinPage';
 
 interface RegistrationPageProps {
   onPageChange: (page: string) => void;
 }
 
 export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1">
-        <UnifiedRegistrationForm showHeader={true} />
-      </main>
-    </div>
-  );
+  return <JoinPage onPageChange={onPageChange} />;
 }

@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Section } from './layout/Section';
 import { PageHeader } from './layout/PageHeader';
 import { Globe, Users, Send, Loader2, CheckCircle } from 'lucide-react';
+import { registrationService } from './services/registrationService';
 
 // Import country/city lists from UnifiedRegistrationForm
 const globalSouthCountries = [
@@ -212,10 +213,46 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    // Validation
+    if (!diasporaFormData.selectedCountry) {
+      setSubmitStatus('error');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      // TODO: Submit to API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Get IP address
+      let ipAddress = '';
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        ipAddress = ipData.ip;
+      } catch (err) {
+        console.warn('Could not fetch IP address:', err);
+      }
+
+      // Get location data
+      const selectedCountryData = diasporaCountries.find(c => c.code === diasporaFormData.selectedCountry);
+      const locationData = {
+        city: diasporaFormData.selectedLocation || '',
+        country: selectedCountryData?.name || '',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+      };
+
+      const payload = {
+        name: diasporaFormData.fullName,
+        email: diasporaFormData.email,
+        whatsapp: diasporaFormData.phone || diasporaFormData.email,
+        countryOfOrigin: diasporaFormData.countryOfOrigin || diasporaFormData.selectedCountry,
+        countryOfResidence: diasporaFormData.selectedCountry,
+        ipAddress,
+        location: locationData,
+        group: 'diaspora' as const
+      };
+
+      await registrationService.submitRegistration(payload);
       setSubmitStatus('success');
+      
       // Reset form after delay
       setTimeout(() => {
         setDiasporaFormData({
@@ -247,9 +284,66 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    // Validation
+    if (!localFormData.selectedCountry) {
+      setSubmitStatus('error');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      // TODO: Submit to API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Get IP address
+      let ipAddress = '';
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        ipAddress = ipData.ip;
+      } catch (err) {
+        console.warn('Could not fetch IP address:', err);
+      }
+
+      // Get location data
+      let locationData = { city: '', country: '', timezone: 'UTC' };
+      try {
+        const locationResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+        const locationJson = await locationResponse.json();
+        locationData = {
+          city: localFormData.selectedLocation || locationJson.city || '',
+          country: globalSouthCountries.find(c => c.code === localFormData.selectedCountry)?.name || locationJson.country_name || '',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+        };
+      } catch (err) {
+        console.warn('Could not fetch location data:', err);
+        locationData = {
+          city: localFormData.selectedLocation || '',
+          country: globalSouthCountries.find(c => c.code === localFormData.selectedCountry)?.name || '',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+        };
+      }
+
+      const payload = {
+        name: localFormData.fullName,
+        email: localFormData.email,
+        whatsapp: localFormData.phone || localFormData.email, // Use email as fallback if no phone
+        countryOfOrigin: localFormData.selectedCountry, // For local, origin is same as residence
+        countryOfResidence: localFormData.selectedCountry,
+        ipAddress,
+        location: locationData,
+        group: 'local' as const,
+        // Additional detailed data (stored in a separate field if backend supports it)
+        additionalData: {
+          state: localFormData.state,
+          ageRange: localFormData.ageRange,
+          background: localFormData.background,
+          fieldOfStudy: localFormData.fieldOfStudy,
+          interests: localFormData.interests,
+          otherInterest: localFormData.otherInterest,
+          expectations: localFormData.expectations,
+          selectedLocation: localFormData.selectedLocation
+        }
+      };
+
+      await registrationService.submitRegistration(payload);
       setSubmitStatus('success');
       // Reset form after delay
       setTimeout(() => {

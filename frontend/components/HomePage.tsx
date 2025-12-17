@@ -116,7 +116,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                   },
                   {
                     label: 'Join our Community',
-                    onClick: () => onPageChange('registration'),
+                    onClick: () => onPageChange('join'),
                     variant: 'primary'
                   }
                 ]}

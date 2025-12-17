@@ -152,7 +152,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
                   <Button
                     size="lg"
                     className="w-full h-12 text-base font-medium"
-                    onClick={() => onPageChange('registration')}
+                    onClick={() => onPageChange('join')}
                   >
                     Join the Local Community
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -244,7 +244,7 @@ export function CommunityPage({ onPageChange }: CommunityPageProps) {
                     size="lg"
                     variant="secondary"
                     className="w-full h-12 text-base font-medium bg-white text-primary hover:bg-white/90"
-                    onClick={() => onPageChange('registration')}
+                    onClick={() => onPageChange('join')}
                   >
                     Join the Diaspora Network
                     <ArrowRight className="ml-2 h-4 w-4" />

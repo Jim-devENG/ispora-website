@@ -81,7 +81,7 @@ export function AppPage({ onPageChange }: AppPageProps) {
               <Button
                 size="lg"
                 className="h-12 px-8 text-base font-medium"
-                onClick={() => onPageChange('registration')}
+                onClick={() => onPageChange('join')}
               >
                 Be first to know — Join our Community
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -129,13 +129,13 @@ export function AppPage({ onPageChange }: AppPageProps) {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   variant="outline"
-                  onClick={() => onPageChange('registration')}
+                  onClick={() => onPageChange('join')}
                 >
                   Join the Local Community
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => onPageChange('registration')}
+                  onClick={() => onPageChange('join')}
                 >
                   Join the Diaspora Network
                 </Button>

@@ -308,7 +308,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             <Button
               size="lg"
               variant="default"
-              onClick={() => onPageChange('registration')}
+              onClick={() => onPageChange('join')}
               className="h-12 px-8"
             >
               Join Our Community

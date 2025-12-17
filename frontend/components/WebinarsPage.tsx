@@ -301,7 +301,7 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
             <p className="text-muted-foreground mb-4">
               Want to stay updated on upcoming events?
             </p>
-            <Button onClick={() => onPageChange('registration')}>
+            <Button onClick={() => onPageChange('join')}>
               Join Our Community
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
