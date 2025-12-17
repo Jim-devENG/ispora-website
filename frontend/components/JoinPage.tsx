@@ -326,6 +326,9 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
             </CardContent>
           </Card>
 
+          {/* Show form based on selection */}
+          {activeTab && (
+            <>
               {/* Diaspora Community Form */}
               {activeTab === 'diaspora' && (
               <Card className="shadow-xl border-primary/10">
