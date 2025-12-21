@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Registration } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle, ChevronDown, ChevronUp, MapPin, Phone, Mail, Globe, Briefcase, GraduationCap, Heart, MessageSquare } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
 
 interface RegistrationsTabProps {
@@ -16,6 +16,7 @@ export function RegistrationsTab({ registrations, setRegistrations, loading, err
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const handleStatusUpdate = async (id: string, newStatus: 'pending' | 'verified' | 'active') => {
     setUpdating(id);
@@ -60,6 +61,16 @@ export function RegistrationsTab({ registrations, setRegistrations, loading, err
     if (currentStatus === 'pending') return 'verified';
     if (currentStatus === 'verified') return 'active';
     return null;
+  };
+
+  const toggleRow = (id: string) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
   };
 
   if (loading) {
@@ -123,6 +134,7 @@ export function RegistrationsTab({ registrations, setRegistrations, loading, err
           <table className="min-w-full text-xs">
             <thead className="bg-slate-900/80 text-slate-300">
               <tr>
+                <th className="px-4 py-3 text-left font-medium w-8"></th>
                 <th className="px-4 py-3 text-left font-medium">Name</th>
                 <th className="px-4 py-3 text-left font-medium">Email</th>
                 <th className="px-4 py-3 text-left font-medium">Country (Residence)</th>
@@ -136,60 +148,183 @@ export function RegistrationsTab({ registrations, setRegistrations, loading, err
             <tbody className="divide-y divide-slate-800">
               {registrations.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={9} className="px-4 py-8 text-center text-slate-400">
                     No registrations found
                   </td>
                 </tr>
               ) : (
                 registrations.map((reg) => {
                   const nextStatus = getNextStatus(reg.status);
+                  const isExpanded = expandedRows.has(reg.id);
+                  const location = reg.location || {};
+                  
                   return (
-                    <tr key={reg.id} className="hover:bg-slate-900/60 transition-colors">
-                      <td className="px-4 py-3 text-slate-200">{reg.name}</td>
-                      <td className="px-4 py-3 text-slate-300">{reg.email}</td>
-                      <td className="px-4 py-3 text-slate-300">{reg.countryOfResidence}</td>
-                      <td className="px-4 py-3 text-slate-300">{reg.countryOfOrigin}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
-                          {reg.group}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={reg.status} />
-                      </td>
-                      <td className="px-4 py-3 text-slate-400">
-                        {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {nextStatus && (
-                            <button
-                              onClick={() => handleStatusUpdate(reg.id, nextStatus)}
-                              disabled={updating === reg.id}
-                              className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs transition-colors disabled:opacity-50 flex items-center"
-                              title={`Set status to ${nextStatus}`}
-                            >
-                              {updating === reg.id ? (
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                              ) : (
-                                <CheckCircle className="h-3 w-3" />
-                              )}
-                            </button>
-                          )}
+                    <React.Fragment key={reg.id}>
+                      <tr className="hover:bg-slate-900/60 transition-colors">
+                        <td className="px-2 py-3">
                           <button
-                            onClick={() => handleDelete(reg.id, reg.name)}
-                            disabled={deleting === reg.id}
-                            className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                            onClick={() => toggleRow(reg.id)}
+                            className="text-slate-400 hover:text-slate-200 transition-colors"
+                            title={isExpanded ? 'Collapse details' : 'Expand details'}
                           >
-                            {deleting === reg.id ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4" />
                             ) : (
-                              <Trash2 className="h-3 w-3" />
+                              <ChevronDown className="h-4 w-4" />
                             )}
                           </button>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="px-4 py-3 text-slate-200">{reg.name}</td>
+                        <td className="px-4 py-3 text-slate-300">{reg.email}</td>
+                        <td className="px-4 py-3 text-slate-300">{reg.countryOfResidence}</td>
+                        <td className="px-4 py-3 text-slate-300">{reg.countryOfOrigin}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
+                            {reg.group}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={reg.status} />
+                        </td>
+                        <td className="px-4 py-3 text-slate-400">
+                          {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {nextStatus && (
+                              <button
+                                onClick={() => handleStatusUpdate(reg.id, nextStatus)}
+                                disabled={updating === reg.id}
+                                className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs transition-colors disabled:opacity-50 flex items-center"
+                                title={`Set status to ${nextStatus}`}
+                              >
+                                {updating === reg.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <CheckCircle className="h-3 w-3" />
+                                )}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDelete(reg.id, reg.name)}
+                              disabled={deleting === reg.id}
+                              className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                            >
+                              {deleting === reg.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-3 w-3" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr>
+                          <td colSpan={9} className="px-4 py-4 bg-slate-900/40">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              {/* Contact Information */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <Mail className="h-4 w-4" /> Contact Information
+                                </h4>
+                                {reg.whatsapp && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <Phone className="h-3 w-3 text-slate-400" />
+                                    <span>WhatsApp: {reg.whatsapp}</span>
+                                  </div>
+                                )}
+                                {location.city && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <MapPin className="h-3 w-3 text-slate-400" />
+                                    <span>{location.city}{location.country ? `, ${location.country}` : ''}</span>
+                                  </div>
+                                )}
+                                {location.linkedin && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <Globe className="h-3 w-3 text-slate-400" />
+                                    <a href={location.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                                      LinkedIn Profile
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Professional Information */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <Briefcase className="h-4 w-4" /> Professional Information
+                                </h4>
+                                {location.currentWork && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Current Work:</span> {location.currentWork}
+                                  </div>
+                                )}
+                                {location.fieldOfStudy && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Field of Study:</span> {location.fieldOfStudy}
+                                  </div>
+                                )}
+                                {location.background && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Background:</span> {location.background}
+                                  </div>
+                                )}
+                                {location.contributeInterest && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Contribution Interest:</span> {location.contributeInterest}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Interests & Areas */}
+                              {(location.areasOfInterest?.length > 0 || location.interests?.length > 0) && (
+                                <div className="space-y-2">
+                                  <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                    <Heart className="h-4 w-4" /> Areas of Interest
+                                  </h4>
+                                  <div className="flex flex-wrap gap-2">
+                                    {(location.areasOfInterest || location.interests || []).map((interest, idx) => (
+                                      <span key={idx} className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
+                                        {interest}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  {location.otherInterest && (
+                                    <div className="text-slate-300 mt-2">
+                                      <span className="text-slate-400">Other:</span> {location.otherInterest}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Additional Details */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <MessageSquare className="h-4 w-4" /> Additional Details
+                                </h4>
+                                {location.state && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">State/Region:</span> {location.state}
+                                  </div>
+                                )}
+                                {location.ageRange && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Age Range:</span> {location.ageRange}
+                                  </div>
+                                )}
+                                {location.expectations && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Expectations:</span>
+                                    <p className="mt-1 text-slate-400 italic">{location.expectations}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })
               )}

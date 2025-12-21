@@ -20,6 +20,26 @@ export interface Registration {
   created_at?: string; // API may return either format
   updatedAt?: string;
   updated_at?: string;
+  location?: {
+    city?: string;
+    country?: string;
+    timezone?: string;
+    coordinates?: { lat: number; lng: number };
+    // Additional form fields stored in location
+    linkedin?: string;
+    currentWork?: string;
+    contributeInterest?: string;
+    areasOfInterest?: string[];
+    otherInterest?: string;
+    expectations?: string;
+    state?: string;
+    ageRange?: string;
+    background?: string;
+    fieldOfStudy?: string;
+    interests?: string[];
+  };
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type BlogPostStatus = 'draft' | 'published' | 'archived';
