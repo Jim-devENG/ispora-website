@@ -128,48 +128,6 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
         </div>
       </Section>
 
-      {/* Statistics Section */}
-      <Section className="relative py-16 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {[
-            { icon: Users, value: '500+', label: 'Active Members', color: 'text-blue-600' },
-            { icon: Building, value: '50+', label: 'Partner Organizations', color: 'text-green-600' },
-            { icon: Globe, value: '30+', label: 'Countries Represented', color: 'text-purple-600' },
-            { icon: Target, value: '100+', label: 'Impact Projects', color: 'text-orange-600' }
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: safeTransition({ delay: index * 0.1, duration: 0.5 })
-                }
-              }}
-              className="text-center"
-            >
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div className={`flex justify-center mb-4 ${stat.color}`}>
-                    <stat.icon className="h-8 w-8" />
-                  </div>
-                  <div className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-muted-foreground font-medium">
-                    {stat.label}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      </Section>
-
       {/* Mission & Vision */}
       <Section 
         className="relative py-20"
@@ -430,14 +388,17 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
 
       {/* Meet the Founding Team */}
       <Section 
-        className="relative py-20"
+        className="relative py-20 overflow-hidden"
         style={{
           background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 100% 95%) 50%, hsl(220 100% 96%) 100%)'
         }}
       >
-        <div className="max-w-6xl mx-auto">
+        <AnimatedBlob className="top-20 right-10 bg-primary/10" delay={1} size="w-72 h-72" />
+        <AnimatedBlob className="bottom-20 left-10 bg-secondary/10" delay={2} size="w-64 h-64" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-16"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
@@ -454,97 +415,111 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
               <Users className="h-3 w-3 mr-2" />
               Leadership Team
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Meet the Founding Team</h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+              Meet the Founding Team
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               iSpora was co-founded by three visionaries united by a shared commitment to the transformation of the Global South.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
             {teamMembers.map((member, index) => (
-          <motion.div 
-              key={member.name}
-            initial="hidden"
-            whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: safeTransition({ delay: index * 0.1, duration: 0.5 })
-                }
-              }}
-            >
-              <Card className={cn(
-                "h-full hover:shadow-xl transition-all duration-300 border-2 relative overflow-hidden",
-                index === 1 
-                  ? "bg-primary text-primary-foreground border-primary shadow-lg" 
-                  : "border-primary/20 hover:border-primary/40 bg-gradient-to-br from-primary/5 to-background"
-              )}>
-                {index === 1 && (
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full -mr-16 -mt-16" />
-                )}
-                <div className={cn("relative z-10", index === 1 && "text-white")}>
-                  <CardHeader>
-                    <div className="flex flex-col items-center text-center mb-4">
-                      <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20 overflow-hidden">
-                        {member.avatarSrc && (
-                          <AvatarImage
-                            src={member.avatarSrc}
-                            alt={member.name}
-                            className="object-cover object-top"
-                          />
-                        )}
-                        <AvatarFallback className={cn(
-                          "text-2xl font-bold",
-                          index === 1 
-                            ? "bg-white/20 text-white backdrop-blur-sm" 
-                            : "bg-gradient-to-r from-primary to-secondary text-white"
-                        )}>
-                          {member.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <CardTitle className={cn("text-xl font-bold", index === 1 && "text-white")}>
-                        {member.name}
-                      </CardTitle>
-                      <Badge 
-                        variant="secondary" 
-                        className={cn(
-                          "mt-2 font-medium",
-                          index === 1 && "bg-white/20 text-white border-white/30"
-                        )}
-                      >
-                        {member.role}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={cn(
-                      "text-sm leading-relaxed",
-                      index === 1 ? "text-white/90" : "text-muted-foreground"
-                    )}>
-                      {member.bio}
-                    </p>
-                    {member.linkedin && (
-                      <div className="mt-4">
+              <motion.div 
+                key={member.name}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-50px' }}
+                variants={{
+                  hidden: { opacity: 0, y: 40, scale: 0.95 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    transition: safeTransition({ delay: index * 0.15, duration: 0.6 })
+                  }
+                }}
+                whileHover={{ y: -8 }}
+                className="group"
+              >
+                <Card className={cn(
+                  "h-full relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500",
+                  "bg-gradient-to-br from-background via-background to-primary/5",
+                  "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/0 before:via-primary/0 before:to-primary/10",
+                  "before:opacity-0 before:transition-opacity before:duration-500",
+                  "group-hover:before:opacity-100"
+                )}>
+                  {/* Decorative gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Top accent line */}
+                  <div className={cn(
+                    "absolute top-0 left-0 right-0 h-1 bg-gradient-to-r",
+                    index === 0 ? "from-blue-500 to-cyan-500" :
+                    index === 1 ? "from-primary to-secondary" :
+                    "from-purple-500 to-pink-500"
+                  )} />
+
+                  <div className="relative z-10">
+                    <CardHeader className="pb-4">
+                      <div className="flex flex-col items-center text-center">
+                        {/* Avatar with modern styling */}
+                        <div className="relative mb-6">
+                          <div className={cn(
+                            "absolute inset-0 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500",
+                            index === 0 ? "bg-blue-500" :
+                            index === 1 ? "bg-primary" :
+                            "bg-purple-500"
+                          )} />
+                          <Avatar className="relative h-32 w-32 mb-0 ring-4 ring-background shadow-2xl overflow-hidden group-hover:ring-primary/30 transition-all duration-500">
+                            {member.avatarSrc && (
+                              <AvatarImage
+                                src={member.avatarSrc}
+                                alt={member.name}
+                                className="object-cover object-top group-hover:scale-110 transition-transform duration-500"
+                              />
+                            )}
+                            <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-primary to-secondary text-white">
+                              {member.initials}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+
+                        <CardTitle className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                          {member.name}
+                        </CardTitle>
+                        <Badge 
+                          variant="secondary" 
+                          className="mt-2 mb-4 px-4 py-1.5 font-semibold bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
+                        >
+                          {member.role}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="pt-0">
+                      <p className="text-sm leading-relaxed text-muted-foreground mb-6 min-h-[120px]">
+                        {member.bio}
+                      </p>
+                      
+                      {member.linkedin && (
                         <Button
                           variant="outline"
                           size="sm"
-                          className={cn(
-                            "w-full",
-                            index === 1 && "border-white/30 text-white hover:bg-white/10"
-                          )}
+                          className="w-full group/btn border-primary/20 hover:border-primary hover:bg-primary/10 transition-all duration-300"
                           onClick={() => window.open(member.linkedin, '_blank')}
                         >
-                          <Linkedin className="h-4 w-4 mr-2" />
-                          LinkedIn Profile
+                          <Linkedin className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
+                          Connect on LinkedIn
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </div>
-              </Card>
+                      )}
+                    </CardContent>
+                  </div>
+
+                  {/* Bottom decorative element */}
+                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                </Card>
               </motion.div>
             ))}
           </div>
