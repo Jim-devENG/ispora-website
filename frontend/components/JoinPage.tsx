@@ -39,25 +39,6 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
     otherInterest: '',
     expectations: ''
   });
-  onPageChange: (page: string) => void;
-}
-
-export function JoinPage({ onPageChange }: JoinPageProps) {
-  const [diasporaFormData, setDiasporaFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    countryOfResidence: '',
-    countryOfOrigin: '',
-    selectedCountry: '',
-    selectedLocation: '',
-    linkedin: '',
-    currentWork: '',
-    contributeInterest: '',
-    areasOfInterest: [] as string[],
-    otherInterest: '',
-    expectations: ''
-  });
 
   const [localFormData, setLocalFormData] = useState({
     fullName: '',
@@ -76,7 +57,6 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [activeTab, setActiveTab] = useState<'local' | 'diaspora' | ''>('');
 
   // Get available countries and cities based on tab
   const availableCountries = activeTab === 'local' ? globalSouthCountries : diasporaCountries;
