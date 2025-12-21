@@ -7,12 +7,12 @@
 // Global South Countries (Local Community)
 export const globalSouthCountries = [
   // Africa
-  { code: 'NG', name: 'Nigeria', cities: ['Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Benin City', 'Kaduna', 'Enugu', 'Aba', 'Warri', 'Onitsha', 'Abeokuta', 'Jos', 'Ilorin', 'Owerri', 'Calabar', 'Uyo', 'Maiduguri', 'Zaria', 'Sokoto'] },
-  { code: 'GH', name: 'Ghana', cities: ['Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Cape Coast', 'Sunyani', 'Ho', 'Koforidua', 'Techiman', 'Tema', 'Sekondi', 'Obuasi', 'Ashaiman', 'Bolgatanga', 'Wa'] },
-  { code: 'KE', name: 'Kenya', cities: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale', 'Garissa', 'Kakamega', 'Nyeri', 'Meru', 'Machakos', 'Narok', 'Embu'] },
-  { code: 'ZA', name: 'South Africa', cities: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Port Elizabeth', 'Bloemfontein', 'East London', 'Pietermaritzburg', 'Polokwane', 'Nelspruit', 'Kimberley', 'Rustenburg', 'Welkom', 'Potchefstroom', 'Upington'] },
+  { code: 'NG', name: 'Nigeria', cities: ['Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Benin City', 'Kaduna', 'Enugu', 'Aba', 'Warri', 'Onitsha', 'Abeokuta', 'Jos', 'Ilorin', 'Owerri', 'Calabar', 'Uyo', 'Maiduguri', 'Zaria', 'Sokoto', 'Akure', 'Osogbo', 'Ilesa', 'Ado-Ekiti', 'Ogbomoso', 'Ikorodu', 'Umuahia', 'Yenagoa', 'Asaba', 'Awka', 'Bauchi', 'Gombe', 'Damaturu', 'Jalingo', 'Makurdi', 'Lafia', 'Minna', 'Birnin Kebbi', 'Katsina', 'Gusau'] },
+  { code: 'GH', name: 'Ghana', cities: ['Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Cape Coast', 'Sunyani', 'Ho', 'Koforidua', 'Techiman', 'Tema', 'Sekondi', 'Obuasi', 'Ashaiman', 'Bolgatanga', 'Wa', 'Winneba', 'Keta', 'Axim', 'Elmina', 'Nkawkaw', 'Konongo', 'Berekum', 'Dunkwa', 'Bibiani', 'Prestea', 'Tarkwa', 'Nsawam', 'Kasoa', 'Madina', 'Dansoman'] },
+  { code: 'KE', name: 'Kenya', cities: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale', 'Garissa', 'Kakamega', 'Nyeri', 'Meru', 'Machakos', 'Narok', 'Embu', 'Nanyuki', 'Kericho', 'Kisii', 'Bungoma', 'Busia', 'Homa Bay', 'Migori', 'Siaya', 'Voi', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Lamu', 'Kilifi'] },
+  { code: 'ZA', name: 'South Africa', cities: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Port Elizabeth', 'Bloemfontein', 'East London', 'Pietermaritzburg', 'Polokwane', 'Nelspruit', 'Kimberley', 'Rustenburg', 'Welkom', 'Potchefstroom', 'Upington', 'Soweto', 'Sandton', 'Benoni', 'Boksburg', 'Vereeniging', 'Germiston', 'Klerksdorp', 'Middelburg', 'Witbank', 'Newcastle', 'George', 'Mossel Bay', 'Stellenbosch', 'Paarl', 'Somerset West'] },
   { code: 'UG', name: 'Uganda', cities: ['Kampala', 'Gulu', 'Lira', 'Mbarara', 'Jinja', 'Mbale', 'Masaka', 'Entebbe', 'Arua', 'Soroti', 'Fort Portal', 'Kabale', 'Mukono', 'Tororo', 'Hoima'] },
-  { code: 'TZ', name: 'Tanzania', cities: ['Dar es Salaam', 'Arusha', 'Mwanza', 'Dodoma', 'Zanzibar', 'Mbeya', 'Tanga', 'Morogoro', 'Tabora', 'Kigoma', 'Mtwara', 'Lindi', 'Musoma', 'Shinyanga', 'Bukoba'] },
+  { code: 'TZ', name: 'Tanzania', cities: ['Dar es Salaam', 'Arusha', 'Mwanza', 'Dodoma', 'Zanzibar', 'Mbeya', 'Tanga', 'Morogoro', 'Tabora', 'Kigoma', 'Mtwara', 'Lindi', 'Musoma', 'Shinyanga', 'Bukoba', 'Iringa', 'Sumbawanga', 'Singida', 'Moshi', 'Songea', 'Kasulu', 'Sengerema', 'Tunduma', 'Babati', 'Kondoa'] },
   { code: 'RW', name: 'Rwanda', cities: ['Kigali', 'Butare', 'Gitarama', 'Ruhengeri', 'Gisenyi', 'Cyangugu', 'Byumba', 'Kibungo', 'Kibuye', 'Rwamagana'] },
   { code: 'ET', name: 'Ethiopia', cities: ['Addis Ababa', 'Dire Dawa', 'Mekelle', 'Gondar', 'Awassa', 'Bahir Dar', 'Dessie', 'Jimma', 'Harar', 'Jijiga', 'Shashamane', 'Nazret', 'Arba Minch', 'Gambela', 'Hawassa'] },
   { code: 'ZM', name: 'Zambia', cities: ['Lusaka', 'Kitwe', 'Ndola', 'Kabwe', 'Chingola', 'Mufulira', 'Livingstone', 'Kasama', 'Chipata', 'Solwezi', 'Mazabuka', 'Mongu', 'Choma', 'Kafue', 'Mpika'] },
@@ -29,6 +29,9 @@ export const globalSouthCountries = [
   { code: 'TN', name: 'Tunisia', cities: ['Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Ariana', 'Gafsa', 'Monastir', 'Ben Arous', 'Medenine', 'Kasserine', 'Jendouba', 'Tozeur', 'Mahdia'] },
   { code: 'EG', name: 'Egypt', cities: ['Cairo', 'Alexandria', 'Giza', 'Shubra El Kheima', 'Port Said', 'Suez', 'Luxor', 'Aswan', 'Ismailia', 'Mansoura', 'Tanta', 'Asyut', 'Zagazig', 'Damietta', 'Minya'] },
   { code: 'SY', name: 'Syria', cities: ['Damascus', 'Aleppo', 'Homs', 'Latakia', 'Hama', 'Raqqa', 'Deir ez-Zor', 'Al-Hasakah', 'Qamishli', 'Tartus', 'Idlib', 'Daraa', 'As-Suwayda', 'Al-Bab', 'Manbij'] },
+  { code: 'MZ', name: 'Mozambique', cities: ['Maputo', 'Matola', 'Beira', 'Nampula', 'Chimoio', 'Nacala', 'Quelimane', 'Tete', 'Lichinga', 'Pemba', 'Xai-Xai', 'Inhambane', 'Maxixe', 'Dondo', 'Angoche'] },
+  { code: 'MG', name: 'Madagascar', cities: ['Antananarivo', 'Toamasina', 'Antsirabe', 'Mahajanga', 'Fianarantsoa', 'Toliara', 'Antsiranana', 'Ambovombe', 'Ambanja', 'Manakara', 'Morondava', 'Sambava', 'Taolagnaro', 'Maroantsetra', 'Nosy Be'] },
+  { code: 'SD', name: 'Sudan', cities: ['Khartoum', 'Omdurman', 'Port Sudan', 'Kassala', 'El Obeid', 'Nyala', 'Wad Madani', 'El Fasher', 'Gedaref', 'Sennar', 'Kosti', 'Atbara', 'El Geneina', 'Dongola', 'Kadugli'] },
   
   // Caribbean
   { code: 'JM', name: 'Jamaica', cities: ['Kingston', 'Montego Bay', 'Spanish Town', 'Portmore', 'Mandeville', 'Ocho Rios', 'Negril', 'May Pen', 'Savanna-la-Mar', 'Old Harbour', 'Linstead', 'St. Ann\'s Bay', 'Falmouth', 'Port Antonio', 'Morant Bay'] },
