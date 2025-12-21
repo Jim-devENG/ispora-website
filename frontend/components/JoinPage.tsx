@@ -12,98 +12,33 @@ import { Section } from './layout/Section';
 import { PageHeader } from './layout/PageHeader';
 import { Globe, Users, Send, Loader2, CheckCircle } from 'lucide-react';
 import { registrationService } from './services/registrationService';
+import { getWhatsAppGroupLink } from './utils/whatsappGroups';
+import { globalSouthCountries, diasporaCountries } from './utils/countries';
 
-// Import country/city lists from UnifiedRegistrationForm
-const globalSouthCountries = [
-  // Africa
-  { code: 'NG', name: 'Nigeria', cities: ['Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Benin City', 'Kaduna', 'Enugu', 'Aba', 'Warri'] },
-  { code: 'GH', name: 'Ghana', cities: ['Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Cape Coast', 'Sunyani', 'Ho', 'Koforidua'] },
-  { code: 'KE', name: 'Kenya', cities: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale'] },
-  { code: 'ZA', name: 'South Africa', cities: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Port Elizabeth', 'Bloemfontein', 'East London', 'Pietermaritzburg'] },
-  { code: 'UG', name: 'Uganda', cities: ['Kampala', 'Gulu', 'Lira', 'Mbarara', 'Jinja', 'Mbale', 'Masaka', 'Entebbe'] },
-  { code: 'TZ', name: 'Tanzania', cities: ['Dar es Salaam', 'Arusha', 'Mwanza', 'Dodoma', 'Zanzibar', 'Mbeya', 'Tanga', 'Morogoro'] },
-  { code: 'RW', name: 'Rwanda', cities: ['Kigali', 'Butare', 'Gitarama', 'Ruhengeri', 'Gisenyi', 'Cyangugu', 'Byumba'] },
-  { code: 'ET', name: 'Ethiopia', cities: ['Addis Ababa', 'Dire Dawa', 'Mekelle', 'Gondar', 'Awassa', 'Bahir Dar', 'Dessie', 'Jimma'] },
-  { code: 'ZM', name: 'Zambia', cities: ['Lusaka', 'Kitwe', 'Ndola', 'Kabwe', 'Chingola', 'Mufulira', 'Livingstone', 'Kasama'] },
-  { code: 'ZW', name: 'Zimbabwe', cities: ['Harare', 'Bulawayo', 'Chitungwiza', 'Mutare', 'Gweru', 'Kwekwe', 'Kadoma', 'Masvingo'] },
-  { code: 'BW', name: 'Botswana', cities: ['Gaborone', 'Francistown', 'Molepolole', 'Serowe', 'Maun', 'Mogoditshane', 'Palapye', 'Selibe Phikwe'] },
-  { code: 'NA', name: 'Namibia', cities: ['Windhoek', 'Walvis Bay', 'Swakopmund', 'Oshakati', 'Rundu', 'Katima Mulilo', 'Grootfontein', 'Keetmanshoop'] },
-  { code: 'CI', name: 'Côte d\'Ivoire', cities: ['Abidjan', 'Bouaké', 'Daloa', 'Yamoussoukro', 'San-Pédro', 'Korhogo', 'Man', 'Divo'] },
-  { code: 'SN', name: 'Senegal', cities: ['Dakar', 'Thiès', 'Rufisque', 'Kaolack', 'Ziguinchor', 'Saint-Louis', 'Touba', 'Mbour'] },
-  { code: 'CM', name: 'Cameroon', cities: ['Douala', 'Yaoundé', 'Garoua', 'Bafoussam', 'Bamenda', 'Maroua', 'Buea', 'Kribi'] },
-  { code: 'ML', name: 'Mali', cities: ['Bamako', 'Sikasso', 'Mopti', 'Koutiala', 'Kayes', 'Ségou', 'Gao', 'Tombouctou'] },
-  { code: 'AO', name: 'Angola', cities: ['Luanda', 'Huambo', 'Lobito', 'Benguela', 'Lubango', 'Kuito', 'Malanje', 'Namibe'] },
-  { code: 'DZ', name: 'Algeria', cities: ['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Djelfa', 'Sétif'] },
-  { code: 'MA', name: 'Morocco', cities: ['Casablanca', 'Rabat', 'Fes', 'Marrakech', 'Tangier', 'Agadir', 'Meknes', 'Oujda'] },
-  { code: 'TN', name: 'Tunisia', cities: ['Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Ariana', 'Gafsa'] },
-  { code: 'EG', name: 'Egypt', cities: ['Cairo', 'Alexandria', 'Giza', 'Shubra El Kheima', 'Port Said', 'Suez', 'Luxor', 'Aswan'] },
-  // Caribbean
-  { code: 'JM', name: 'Jamaica', cities: ['Kingston', 'Montego Bay', 'Spanish Town', 'Portmore', 'Mandeville', 'Ocho Rios', 'Negril', 'May Pen'] },
-  { code: 'TT', name: 'Trinidad and Tobago', cities: ['Port of Spain', 'San Fernando', 'Chaguanas', 'Arima', 'Couva', 'Point Fortin', 'Princes Town', 'Tunapuna'] },
-  { code: 'BB', name: 'Barbados', cities: ['Bridgetown', 'Speightstown', 'Oistins', 'Holetown', 'The Crane', 'St. Lawrence', 'Worthing', 'Hastings'] },
-  { code: 'GD', name: 'Grenada', cities: ['St. George\'s', 'Gouyave', 'Grenville', 'Victoria', 'Sauteurs', 'Hillsborough', 'Carriacou'] },
-  { code: 'BS', name: 'Bahamas', cities: ['Nassau', 'Freeport', 'Marsh Harbour', 'George Town', 'Coopers Town', 'High Rock', 'Andros Town', 'Duncan Town'] },
-  // Latin America
-  { code: 'BR', name: 'Brazil', cities: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte', 'Manaus', 'Curitiba'] },
-  { code: 'MX', name: 'Mexico', cities: ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana', 'León', 'Juárez', 'Torreón'] },
-  { code: 'AR', name: 'Argentina', cities: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'Tucumán', 'La Plata', 'Mar del Plata', 'Salta'] },
-  { code: 'CO', name: 'Colombia', cities: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Soledad', 'Ibagué'] },
-  { code: 'PE', name: 'Peru', cities: ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 'Cusco', 'Huancayo'] },
-  { code: 'CL', name: 'Chile', cities: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta', 'Temuco', 'Rancagua', 'Talca'] },
-  { code: 'VE', name: 'Venezuela', cities: ['Caracas', 'Maracaibo', 'Valencia', 'Barquisimeto', 'Maracay', 'Ciudad Guayana', 'Barcelona', 'Maturín'] },
-  { code: 'EC', name: 'Ecuador', cities: ['Quito', 'Guayaquil', 'Cuenca', 'Santo Domingo', 'Machala', 'Durán', 'Manta', 'Portoviejo'] },
-  { code: 'GT', name: 'Guatemala', cities: ['Guatemala City', 'Mixco', 'Villa Nueva', 'Quetzaltenango', 'Escuintla', 'San Juan Sacatepéquez', 'Villa Canales', 'Petapa'] },
-  { code: 'DO', name: 'Dominican Republic', cities: ['Santo Domingo', 'Santiago', 'La Romana', 'San Pedro de Macorís', 'San Francisco de Macorís', 'Puerto Plata', 'Bavaro', 'Punta Cana'] },
-  // Asia (Global South)
-  { code: 'IN', name: 'India', cities: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad'] },
-  { code: 'PK', name: 'Pakistan', cities: ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Peshawar', 'Islamabad'] },
-  { code: 'BD', name: 'Bangladesh', cities: ['Dhaka', 'Chittagong', 'Khulna', 'Rajshahi', 'Sylhet', 'Comilla', 'Barisal', 'Rangpur'] },
-  { code: 'PH', name: 'Philippines', cities: ['Manila', 'Quezon City', 'Caloocan', 'Davao', 'Cebu', 'Zamboanga', 'Antipolo', 'Pasig'] },
-  { code: 'VN', name: 'Vietnam', cities: ['Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Haiphong', 'Can Tho', 'Bien Hoa', 'Hue', 'Nha Trang'] },
-  { code: 'TH', name: 'Thailand', cities: ['Bangkok', 'Nonthaburi', 'Nakhon Ratchasima', 'Chiang Mai', 'Hat Yai', 'Udon Thani', 'Pak Kret', 'Khon Kaen'] },
-  { code: 'ID', name: 'Indonesia', cities: ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Palembang', 'Makassar', 'Tangerang'] },
-  { code: 'MY', name: 'Malaysia', cities: ['Kuala Lumpur', 'George Town', 'Ipoh', 'Shah Alam', 'Petaling Jaya', 'Johor Bahru', 'Malacca City', 'Kota Kinabalu'] },
-  // Middle East (Global South)
-  { code: 'IQ', name: 'Iraq', cities: ['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Najaf', 'Karbala', 'Sulaymaniyah', 'Kirkuk'] },
-  { code: 'YE', name: 'Yemen', cities: ['Sana\'a', 'Aden', 'Taiz', 'Al Hudaydah', 'Ibb', 'Dhamar', 'Al Mukalla', 'Sayyan'] },
-  { code: 'JO', name: 'Jordan', cities: ['Amman', 'Zarqa', 'Irbid', 'Russeifa', 'Wadi Al-Sir', 'Aqaba', 'Madaba', 'Salt'] },
-  { code: 'LB', name: 'Lebanon', cities: ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Nabatieh', 'Jounieh', 'Zahle', 'Baalbek'] },
-  { code: 'PS', name: 'Palestine', cities: ['Gaza', 'Hebron', 'Nablus', 'Ramallah', 'Jericho', 'Bethlehem', 'Jenin', 'Tulkarm'] },
-  // Oceania (Global South)
-  { code: 'FJ', name: 'Fiji', cities: ['Suva', 'Lautoka', 'Nadi', 'Labasa', 'Ba', 'Levuka', 'Sigatoka', 'Nausori'] },
-  { code: 'PG', name: 'Papua New Guinea', cities: ['Port Moresby', 'Lae', 'Arawa', 'Mount Hagen', 'Popondetta', 'Madang', 'Kokopo', 'Goroka'] },
-].sort((a, b) => a.name.localeCompare(b.name));
-
-const diasporaCountries = [
-  { code: 'US', name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'San Francisco', 'Columbus', 'Fort Worth', 'Charlotte', 'Seattle', 'Denver', 'Washington', 'Boston'] },
-  { code: 'GB', name: 'United Kingdom', cities: ['London', 'Birmingham', 'Manchester', 'Glasgow', 'Liverpool', 'Leeds', 'Edinburgh', 'Sheffield', 'Bristol', 'Cardiff', 'Belfast', 'Leicester', 'Coventry', 'Nottingham', 'Newcastle', 'Southampton', 'Portsmouth', 'Reading', 'Northampton', 'Luton'] },
-  { code: 'CA', name: 'Canada', cities: ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener', 'London', 'Victoria', 'Halifax', 'Oshawa', 'Windsor', 'Saskatoon', 'Regina', 'Sherbrooke', 'Kelowna', 'Barrie'] },
-  { code: 'FR', name: 'France', cities: ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille', 'Rennes', 'Reims', 'Le Havre', 'Saint-Étienne', 'Toulon', 'Grenoble', 'Dijon', 'Angers', 'Nîmes', 'Villeurbanne'] },
-  { code: 'DE', name: 'Germany', cities: ['Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dortmund', 'Essen', 'Leipzig', 'Bremen', 'Dresden', 'Hannover', 'Nuremberg', 'Duisburg', 'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster'] },
-  { code: 'NL', name: 'Netherlands', cities: ['Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven', 'Groningen', 'Tilburg', 'Almere', 'Breda', 'Nijmegen', 'Enschede', 'Haarlem', 'Arnhem', 'Zaanstad', 'Amersfoort', 'Apeldoorn', 'Hoofddorp', 'Maastricht', 'Leiden', 'Dordrecht'] },
-  { code: 'SE', name: 'Sweden', cities: ['Stockholm', 'Gothenburg', 'Malmö', 'Uppsala', 'Västerås', 'Örebro', 'Linköping', 'Helsingborg', 'Jönköping', 'Norrköping', 'Lund', 'Umeå', 'Gävle', 'Borås', 'Södertälje', 'Eskilstuna', 'Karlstad', 'Halmstad', 'Växjö', 'Sundsvall'] },
-  { code: 'NO', name: 'Norway', cities: ['Oslo', 'Bergen', 'Trondheim', 'Stavanger', 'Bærum', 'Kristiansand', 'Fredrikstad', 'Tromsø', 'Sandnes', 'Asker', 'Skien', 'Drammen', 'Sarpsborg', 'Bodø', 'Ålesund', 'Arendal', 'Haugesund', 'Tønsberg', 'Moss', 'Porsgrunn'] },
-  { code: 'DK', name: 'Denmark', cities: ['Copenhagen', 'Aarhus', 'Odense', 'Aalborg', 'Esbjerg', 'Randers', 'Kolding', 'Horsens', 'Vejle', 'Roskilde', 'Herning', 'Helsingør', 'Silkeborg', 'Næstved', 'Fredericia', 'Viborg', 'Køge', 'Holstebro', 'Taastrup', 'Sønderborg'] },
-  { code: 'FI', name: 'Finland', cities: ['Helsinki', 'Espoo', 'Tampere', 'Vantaa', 'Oulu', 'Turku', 'Jyväskylä', 'Lahti', 'Kuopio', 'Pori', 'Kouvola', 'Joensuu', 'Lappeenranta', 'Hämeenlinna', 'Vaasa', 'Seinäjoki', 'Rovaniemi', 'Mikkeli', 'Kotka', 'Salo'] },
-  { code: 'IE', name: 'Ireland', cities: ['Dublin', 'Cork', 'Limerick', 'Galway', 'Waterford', 'Drogheda', 'Dundalk', 'Swords', 'Bray', 'Navan', 'Ennis', 'Kilkenny', 'Carlow', 'Tralee', 'Newbridge', 'Naas', 'Athlone', 'Portlaoise', 'Mullingar', 'Celbridge'] },
-  { code: 'ES', name: 'Spain', cities: ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Zaragoza', 'Málaga', 'Murcia', 'Palma', 'Las Palmas', 'Bilbao', 'Alicante', 'Córdoba', 'Valladolid', 'Vigo', 'Gijón', 'Hospitalet', 'Granada', 'Vitoria-Gasteiz', 'A Coruña', 'Elche'] },
-  { code: 'PT', name: 'Portugal', cities: ['Lisbon', 'Porto', 'Vila Nova de Gaia', 'Amadora', 'Braga', 'Funchal', 'Coimbra', 'Setúbal', 'Almada', 'Agualva-Cacém', 'Queluz', 'Rio de Mouro', 'Barreiro', 'Aveiro', 'Corroios', 'Leiria', 'Faro', 'Évora', 'Portimão', 'Viseu'] },
-  { code: 'IT', name: 'Italy', cities: ['Rome', 'Milan', 'Naples', 'Turin', 'Palermo', 'Genoa', 'Bologna', 'Florence', 'Bari', 'Catania', 'Venice', 'Verona', 'Messina', 'Padua', 'Trieste', 'Brescia', 'Parma', 'Taranto', 'Modena', 'Reggio Calabria'] },
-  { code: 'CH', name: 'Switzerland', cities: ['Zurich', 'Geneva', 'Basel', 'Bern', 'Lausanne', 'Winterthur', 'St. Gallen', 'Lucerne', 'Lugano', 'Biel', 'Thun', 'Köniz', 'La Chaux-de-Fonds', 'Schaffhausen', 'Fribourg', 'Chur', 'Neuchâtel', 'Vernier', 'Uster', 'Sion'] },
-  { code: 'BE', name: 'Belgium', cities: ['Brussels', 'Antwerp', 'Ghent', 'Charleroi', 'Liège', 'Bruges', 'Namur', 'Leuven', 'Mons', 'Aalst', 'Mechelen', 'La Louvière', 'Hasselt', 'Kortrijk', 'Sint-Niklaas', 'Ostend', 'Tournai', 'Genk', 'Seraing', 'Roeselare'] },
-  { code: 'AT', name: 'Austria', cities: ['Vienna', 'Graz', 'Linz', 'Salzburg', 'Innsbruck', 'Klagenfurt', 'Villach', 'Wels', 'Sankt Pölten', 'Dornbirn', 'Steyr', 'Wiener Neustadt', 'Feldkirch', 'Bregenz', 'Leonding', 'Klosterneuburg', 'Baden', 'Wolfsberg', 'Leoben', 'Krems'] },
-  { code: 'AU', name: 'Australia', cities: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast', 'Newcastle', 'Canberra', 'Sunshine Coast', 'Wollongong', 'Hobart', 'Geelong', 'Townsville', 'Cairns', 'Toowoomba', 'Darwin', 'Ballarat', 'Bendigo', 'Albury', 'Launceston'] },
-  { code: 'NZ', name: 'New Zealand', cities: ['Auckland', 'Wellington', 'Christchurch', 'Hamilton', 'Tauranga', 'Napier', 'Palmerston North', 'Dunedin', 'Rotorua', 'New Plymouth', 'Whangarei', 'Invercargill', 'Nelson', 'Hastings', 'Gisborne', 'Timaru', 'Blenheim', 'Taupo', 'Pukekohe', 'Masterton'] },
-  { code: 'AE', name: 'United Arab Emirates', cities: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Al Ain', 'Ajman', 'Ras Al Khaimah', 'Fujairah', 'Umm Al Quwain', 'Khor Fakkan', 'Kalba'] },
-  { code: 'QA', name: 'Qatar', cities: ['Doha', 'Al Rayyan', 'Umm Salal', 'Al Wakrah', 'Al Khor', 'Dukhan', 'Mesaieed', 'Al Shamal', 'Al Daayen', 'Al Sheehaniya'] },
-  { code: 'SA', name: 'Saudi Arabia', cities: ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar', 'Taif', 'Abha', 'Tabuk', 'Buraydah', 'Khamis Mushait', 'Hail', 'Najran', 'Al Jubail', 'Yanbu', 'Al Kharj', 'Arar', 'Sakaka', 'Jizan', 'Dhahran'] },
-  { code: 'CN', name: 'China', cities: ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Chengdu', 'Hangzhou', 'Wuhan', 'Xi\'an', 'Nanjing', 'Tianjin', 'Suzhou', 'Dongguan', 'Chongqing', 'Foshan', 'Shenyang', 'Qingdao', 'Zhengzhou', 'Changsha', 'Kunming', 'Dalian'] },
-  { code: 'JP', name: 'Japan', cities: ['Tokyo', 'Yokohama', 'Osaka', 'Nagoya', 'Sapporo', 'Fukuoka', 'Kobe', 'Kawasaki', 'Kyoto', 'Saitama', 'Hiroshima', 'Sendai', 'Chiba', 'Kitakyushu', 'Sakai', 'Niigata', 'Hamamatsu', 'Shizuoka', 'Sagamihara', 'Okayama'] },
-  { code: 'KR', name: 'South Korea', cities: ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju', 'Suwon', 'Ulsan', 'Changwon', 'Goyang', 'Seongnam', 'Bucheon', 'Ansan', 'Anyang', 'Jeonju', 'Cheonan', 'Namyangju', 'Hwaseong', 'Gimhae', 'Pyeongtaek'] },
-  { code: 'SG', name: 'Singapore', cities: ['Singapore', 'Jurong West', 'Tampines', 'Woodlands', 'Yishun', 'Ang Mo Kio', 'Hougang', 'Sengkang', 'Punggol', 'Pasir Ris', 'Choa Chu Kang', 'Bukit Batok', 'Bukit Panjang', 'Toa Payoh', 'Bishan', 'Serangoon', 'Clementi', 'Queenstown', 'Marine Parade', 'Bedok'] },
-].sort((a, b) => a.name.localeCompare(b.name));
+// Note: Countries are now imported from utils/countries.ts
+// Additional countries can be added gradually to that file
 
 interface JoinPageProps {
+  onPageChange?: (page: string) => void;
+}
+
+export function JoinPage({ onPageChange }: JoinPageProps) {
+  const [activeTab, setActiveTab] = useState<'local' | 'diaspora' | ''>('');
+  const [diasporaFormData, setDiasporaFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    countryOfResidence: '',
+    countryOfOrigin: '',
+    selectedCountry: '',
+    selectedLocation: '',
+    linkedin: '',
+    currentWork: '',
+    contributeInterest: '',
+    areasOfInterest: [] as string[],
+    otherInterest: '',
+    expectations: ''
+  });
   onPageChange: (page: string) => void;
 }
 
@@ -246,32 +181,56 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
         countryOfOrigin: diasporaFormData.countryOfOrigin || diasporaFormData.selectedCountry,
         countryOfResidence: diasporaFormData.selectedCountry,
         ipAddress,
-        location: locationData,
+        location: {
+          ...locationData,
+          // Additional form fields
+          linkedin: diasporaFormData.linkedin || null,
+          currentWork: diasporaFormData.currentWork || null,
+          contributeInterest: diasporaFormData.contributeInterest || null,
+          areasOfInterest: diasporaFormData.areasOfInterest || [],
+          otherInterest: diasporaFormData.otherInterest || null,
+          expectations: diasporaFormData.expectations || null,
+          city: diasporaFormData.selectedLocation || locationData.city,
+        },
         group: 'diaspora' as const
       };
 
       await registrationService.submitRegistration(payload);
       setSubmitStatus('success');
       
-      // Reset form after delay
+      // Redirect to WhatsApp after successful submission
       setTimeout(() => {
-        setDiasporaFormData({
-          fullName: '',
-          email: '',
-          phone: '',
-          countryOfResidence: '',
-          countryOfOrigin: '',
-          selectedCountry: '',
-          selectedLocation: '',
-          linkedin: '',
-          currentWork: '',
-          contributeInterest: '',
-          areasOfInterest: [],
-          otherInterest: '',
-          expectations: ''
-        });
-        setSubmitStatus('idle');
-      }, 3000);
+        try {
+          const whatsappLink = getWhatsAppGroupLink('diaspora');
+          const newWindow = window.open(whatsappLink, '_blank');
+          if (!newWindow) {
+            window.location.href = whatsappLink;
+          }
+        } catch (error) {
+          console.error('Error opening WhatsApp link:', error);
+          window.location.href = getWhatsAppGroupLink('diaspora');
+        }
+        
+        // Reset form after delay
+        setTimeout(() => {
+          setDiasporaFormData({
+            fullName: '',
+            email: '',
+            phone: '',
+            countryOfResidence: '',
+            countryOfOrigin: '',
+            selectedCountry: '',
+            selectedLocation: '',
+            linkedin: '',
+            currentWork: '',
+            contributeInterest: '',
+            areasOfInterest: [],
+            otherInterest: '',
+            expectations: ''
+          });
+          setSubmitStatus('idle');
+        }, 2000);
+      }, 1500);
     } catch (error) {
       setSubmitStatus('error');
     } finally {
@@ -328,30 +287,56 @@ export function JoinPage({ onPageChange }: JoinPageProps) {
         countryOfOrigin: localFormData.selectedCountry, // For local, origin is same as residence
         countryOfResidence: localFormData.selectedCountry,
         ipAddress,
-        location: locationData,
+        location: {
+          ...locationData,
+          // Additional form fields
+          state: localFormData.state || null,
+          ageRange: localFormData.ageRange || null,
+          background: localFormData.background || null,
+          fieldOfStudy: localFormData.fieldOfStudy || null,
+          interests: localFormData.interests || [],
+          otherInterest: localFormData.otherInterest || null,
+          expectations: localFormData.expectations || null,
+          city: localFormData.selectedLocation || locationData.city,
+        },
         group: 'local' as const
       };
 
       await registrationService.submitRegistration(payload);
       setSubmitStatus('success');
-      // Reset form after delay
+      
+      // Redirect to WhatsApp after successful submission
       setTimeout(() => {
-        setLocalFormData({
-          fullName: '',
-          email: '',
-          phone: '',
-          selectedCountry: '',
-          selectedLocation: '',
-          state: '',
-          ageRange: '',
-          background: '',
-          fieldOfStudy: '',
-          interests: [],
-          otherInterest: '',
-          expectations: ''
-        });
-        setSubmitStatus('idle');
-      }, 3000);
+        try {
+          const whatsappLink = getWhatsAppGroupLink('local');
+          const newWindow = window.open(whatsappLink, '_blank');
+          if (!newWindow) {
+            window.location.href = whatsappLink;
+          }
+        } catch (error) {
+          console.error('Error opening WhatsApp link:', error);
+          window.location.href = getWhatsAppGroupLink('local');
+        }
+        
+        // Reset form after delay
+        setTimeout(() => {
+          setLocalFormData({
+            fullName: '',
+            email: '',
+            phone: '',
+            selectedCountry: '',
+            selectedLocation: '',
+            state: '',
+            ageRange: '',
+            background: '',
+            fieldOfStudy: '',
+            interests: [],
+            otherInterest: '',
+            expectations: ''
+          });
+          setSubmitStatus('idle');
+        }, 2000);
+      }, 1500);
     } catch (error) {
       setSubmitStatus('error');
     } finally {

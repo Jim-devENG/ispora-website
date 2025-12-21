@@ -10,63 +10,118 @@ import { Alert, AlertDescription } from './ui/alert';
 import { CheckCircle, AlertCircle, Loader2, Globe, Users, Share2, ArrowRight } from 'lucide-react';
 import { registrationService } from './services/registrationService';
 import { cn } from './ui/utils';
+import { getWhatsAppGroupLink } from './utils/whatsappGroups';
+import { globalSouthCountries, diasporaCountries } from './utils/countries';
 
-// Global South Countries (Local Community)
-const globalSouthCountries = [
-  // Africa
-  { code: 'NG', name: 'Nigeria', cities: ['Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Benin City', 'Kaduna', 'Enugu', 'Aba', 'Warri'] },
-  { code: 'GH', name: 'Ghana', cities: ['Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Cape Coast', 'Sunyani', 'Ho', 'Koforidua'] },
-  { code: 'KE', name: 'Kenya', cities: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale'] },
-  { code: 'ZA', name: 'South Africa', cities: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Port Elizabeth', 'Bloemfontein', 'East London', 'Pietermaritzburg'] },
-  { code: 'UG', name: 'Uganda', cities: ['Kampala', 'Gulu', 'Lira', 'Mbarara', 'Jinja', 'Mbale', 'Masaka', 'Entebbe'] },
-  { code: 'TZ', name: 'Tanzania', cities: ['Dar es Salaam', 'Arusha', 'Mwanza', 'Dodoma', 'Zanzibar', 'Mbeya', 'Tanga', 'Morogoro'] },
-  { code: 'RW', name: 'Rwanda', cities: ['Kigali', 'Butare', 'Gitarama', 'Ruhengeri', 'Gisenyi', 'Cyangugu', 'Byumba'] },
-  { code: 'ET', name: 'Ethiopia', cities: ['Addis Ababa', 'Dire Dawa', 'Mekelle', 'Gondar', 'Awassa', 'Bahir Dar', 'Dessie', 'Jimma'] },
-  { code: 'ZM', name: 'Zambia', cities: ['Lusaka', 'Kitwe', 'Ndola', 'Kabwe', 'Chingola', 'Mufulira', 'Livingstone', 'Kasama'] },
-  { code: 'ZW', name: 'Zimbabwe', cities: ['Harare', 'Bulawayo', 'Chitungwiza', 'Mutare', 'Gweru', 'Kwekwe', 'Kadoma', 'Masvingo'] },
-  { code: 'BW', name: 'Botswana', cities: ['Gaborone', 'Francistown', 'Molepolole', 'Serowe', 'Maun', 'Mogoditshane', 'Palapye', 'Selibe Phikwe'] },
-  { code: 'NA', name: 'Namibia', cities: ['Windhoek', 'Walvis Bay', 'Swakopmund', 'Oshakati', 'Rundu', 'Katima Mulilo', 'Grootfontein', 'Keetmanshoop'] },
-  { code: 'CI', name: 'Côte d\'Ivoire', cities: ['Abidjan', 'Bouaké', 'Daloa', 'Yamoussoukro', 'San-Pédro', 'Korhogo', 'Man', 'Divo'] },
-  { code: 'SN', name: 'Senegal', cities: ['Dakar', 'Thiès', 'Rufisque', 'Kaolack', 'Ziguinchor', 'Saint-Louis', 'Touba', 'Mbour'] },
-  { code: 'CM', name: 'Cameroon', cities: ['Douala', 'Yaoundé', 'Garoua', 'Bafoussam', 'Bamenda', 'Maroua', 'Buea', 'Kribi'] },
-  { code: 'ML', name: 'Mali', cities: ['Bamako', 'Sikasso', 'Mopti', 'Koutiala', 'Kayes', 'Ségou', 'Gao', 'Tombouctou'] },
-  { code: 'AO', name: 'Angola', cities: ['Luanda', 'Huambo', 'Lobito', 'Benguela', 'Lubango', 'Kuito', 'Malanje', 'Namibe'] },
-  { code: 'DZ', name: 'Algeria', cities: ['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Djelfa', 'Sétif'] },
-  { code: 'MA', name: 'Morocco', cities: ['Casablanca', 'Rabat', 'Fes', 'Marrakech', 'Tangier', 'Agadir', 'Meknes', 'Oujda'] },
-  { code: 'TN', name: 'Tunisia', cities: ['Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Ariana', 'Gafsa'] },
-  { code: 'EG', name: 'Egypt', cities: ['Cairo', 'Alexandria', 'Giza', 'Shubra El Kheima', 'Port Said', 'Suez', 'Luxor', 'Aswan'] },
+// Note: Countries are now imported from utils/countries.ts
+// Additional countries can be added gradually to that file
+
+interface UnifiedRegistrationFormProps {
+  showHeader?: boolean;
+}
+
+export function UnifiedRegistrationForm({ showHeader = true }: UnifiedRegistrationFormProps) {
+  const [communityType, setCommunityType] = useState<'diaspora' | 'local'>('local');
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+    countryOfOrigin: '',
+    countryOfResidence: '',
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    ipAddress: '',
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Get available countries based on community type
+  const availableCountries = communityType === 'local' ? globalSouthCountries : diasporaCountries;
+  { code: 'EG', name: 'Egypt', cities: ['Cairo', 'Alexandria', 'Giza', 'Shubra El Kheima', 'Port Said', 'Suez', 'Luxor', 'Aswan', 'Mansoura', 'Tanta', 'Asyut', 'Ismailia', 'Faiyum', 'Zagazig', 'Damietta'] },
+  { code: 'SD', name: 'Sudan', cities: ['Khartoum', 'Omdurman', 'Port Sudan', 'Kassala', 'El Obeid', 'Nyala', 'Wad Madani', 'Al Qadarif', 'Kosti', 'El Fasher', 'Geneina', 'Ed Damer', 'Atbara', 'Singa', 'El Daein'] },
+  { code: 'LY', name: 'Libya', cities: ['Tripoli', 'Benghazi', 'Misrata', 'Bayda', 'Zawiya', 'Ajdabiya', 'Sabha', 'Sirte', 'Tobruk', 'Derna', 'Gharyan', 'Khoms', 'Zuwara', 'Tarhuna', 'Bani Walid'] },
+  { code: 'SO', name: 'Somalia', cities: ['Mogadishu', 'Hargeisa', 'Kismayo', 'Berbera', 'Baidoa', 'Bosaso', 'Galkayo', 'Garowe', 'Jowhar', 'Merca', 'Beledweyne', 'Borama', 'Las Anod', 'Eyl', 'Afgooye'] },
+  { code: 'ER', name: 'Eritrea', cities: ['Asmara', 'Keren', 'Massawa', 'Assab', 'Mendefera', 'Adi Keyh', 'Barentu', 'Nakfa', 'Teseney', 'Dekemhare', 'Agordat', 'Ghinda', 'Senafe', 'Edd', 'Ak\'ordat'] },
+  { code: 'DJ', name: 'Djibouti', cities: ['Djibouti', 'Ali Sabieh', 'Tadjoura', 'Obock', 'Dikhil', 'Arta', 'Holhol', 'Yoboki', 'Loyada', 'Randa'] },
+  { code: 'TD', name: 'Chad', cities: ['N\'Djamena', 'Moundou', 'Sarh', 'Abéché', 'Kelo', 'Koumra', 'Pala', 'Am Timan', 'Bongor', 'Mongo', 'Ati', 'Oum Hadjer', 'Doba', 'Lai', 'Biltine'] },
+  { code: 'NE', name: 'Niger', cities: ['Niamey', 'Zinder', 'Maradi', 'Agadez', 'Tahoua', 'Dosso', 'Diffa', 'Tillabéri', 'Arlit', 'Ayorou', 'Birni N\'Konni', 'Gaya', 'Madaoua', 'Tessaoua', 'Magaria'] },
+  { code: 'BF', name: 'Burkina Faso', cities: ['Ouagadougou', 'Bobo-Dioulasso', 'Koudougou', 'Ouahigouya', 'Banfora', 'Dédougou', 'Kaya', 'Tenkodogo', 'Fada N\'gourma', 'Dori', 'Gaoua', 'Koupéla', 'Zorgho', 'Manga', 'Nouna'] },
+  { code: 'GN', name: 'Guinea', cities: ['Conakry', 'Nzérékoré', 'Kindia', 'Boké', 'Kankan', 'Labé', 'Mamou', 'Kamsar', 'Faranah', 'Siguiri', 'Macenta', 'Kissidougou', 'Guéckédou', 'Télimélé', 'Pita'] },
+  { code: 'SL', name: 'Sierra Leone', cities: ['Freetown', 'Bo', 'Kenema', 'Makeni', 'Koidu', 'Lunsar', 'Port Loko', 'Kabala', 'Magburaka', 'Kailahun', 'Bonthe', 'Pujehun', 'Yengema', 'Moyamba', 'Waterloo'] },
+  { code: 'LR', name: 'Liberia', cities: ['Monrovia', 'Gbarnga', 'Buchanan', 'Zwedru', 'Harper', 'Voinjama', 'Kakata', 'Bensonville', 'Robertsport', 'Greenville', 'Sanniquellie', 'Tubmanburg', 'Harbel', 'Barclayville', 'Fish Town'] },
+  { code: 'TG', name: 'Togo', cities: ['Lomé', 'Sokodé', 'Kara', 'Kpalimé', 'Atakpamé', 'Bassar', 'Tsévié', 'Aného', 'Mango', 'Dapaong', 'Tchamba', 'Notsé', 'Vogan', 'Badou', 'Kandé'] },
+  { code: 'BJ', name: 'Benin', cities: ['Cotonou', 'Porto-Novo', 'Parakou', 'Djougou', 'Bohicon', 'Abomey', 'Natitingou', 'Lokossa', 'Ouidah', 'Kandi', 'Pobé', 'Savalou', 'Malanville', 'Comé', 'Allada'] },
+  { code: 'MR', name: 'Mauritania', cities: ['Nouakchott', 'Nouadhibou', 'Rosso', 'Kaédi', 'Zouérat', 'Atar', 'Kiffa', 'Aleg', 'Selibaby', 'Aïoun', 'Tidjikja', 'Akjoujt', 'Boutilimit', 'Néma', 'Fderîck'] },
+  { code: 'GM', name: 'Gambia', cities: ['Banjul', 'Serekunda', 'Brikama', 'Bakau', 'Farafenni', 'Lamin', 'Sukuta', 'Basse Santa Su', 'Gunjur', 'Brufut', 'Yundum', 'Essau', 'Kotu', 'Tanji', 'Kerewan'] },
+  { code: 'GW', name: 'Guinea-Bissau', cities: ['Bissau', 'Bafatá', 'Gabú', 'Bissorã', 'Bolama', 'Cacheu', 'Catió', 'Farim', 'Mansôa', 'Quinhámel', 'Buba', 'Canchungo', 'Fulacunda', 'São Domingos', 'Varela'] },
+  { code: 'ST', name: 'São Tomé and Príncipe', cities: ['São Tomé', 'Trindade', 'Santana', 'Neves', 'Guadalupe', 'Santo António', 'São João dos Angolares', 'Ribeira Afonso', 'Ponta do Sol', 'Santo Amaro'] },
+  { code: 'GA', name: 'Gabon', cities: ['Libreville', 'Port-Gentil', 'Franceville', 'Oyem', 'Moanda', 'Mouila', 'Tchibanga', 'Koulamoutou', 'Lambaréné', 'Bitam', 'Gamba', 'Mitzic', 'Okondja', 'Ntoum', 'Ndjolé'] },
+  { code: 'CG', name: 'Republic of the Congo', cities: ['Brazzaville', 'Pointe-Noire', 'Dolisie', 'Nkayi', 'Owando', 'Ouesso', 'Loandjili', 'Madingou', 'Gamboma', 'Impfondo', 'Sibiti', 'Mossendjo', 'Kinkala', 'Djambala', 'Ewo'] },
+  { code: 'CD', name: 'Democratic Republic of the Congo', cities: ['Kinshasa', 'Lubumbashi', 'Mbuji-Mayi', 'Kisangani', 'Bukavu', 'Kananga', 'Tshikapa', 'Likasi', 'Kolwezi', 'Goma', 'Kikwit', 'Uvira', 'Bunia', 'Matadi', 'Mbandaka'] },
+  { code: 'CF', name: 'Central African Republic', cities: ['Bangui', 'Bimbo', 'Berbérati', 'Carnot', 'Bambari', 'Bouar', 'Bossangoa', 'Bria', 'Bangassou', 'Nola', 'Kaga-Bandoro', 'Mbaïki', 'Sibut', 'Mobaye', 'Paoua'] },
+  { code: 'SS', name: 'South Sudan', cities: ['Juba', 'Wau', 'Malakal', 'Yambio', 'Rumbek', 'Torit', 'Bor', 'Aweil', 'Yei', 'Bentiu', 'Kuacjok', 'Gogrial', 'Maridi', 'Kapoeta', 'Renk'] },
+  { code: 'MW', name: 'Malawi', cities: ['Lilongwe', 'Blantyre', 'Mzuzu', 'Zomba', 'Kasungu', 'Mangochi', 'Karonga', 'Salima', 'Nkhotakota', 'Liwonde', 'Nsanje', 'Rumphi', 'Mzimba', 'Balaka', 'Dedza'] },
+  { code: 'MZ', name: 'Mozambique', cities: ['Maputo', 'Matola', 'Beira', 'Nampula', 'Chimoio', 'Nacala', 'Quelimane', 'Tete', 'Lichinga', 'Pemba', 'Xai-Xai', 'Gurue', 'Maxixe', 'Angoche', 'Montepuez'] },
+  { code: 'MG', name: 'Madagascar', cities: ['Antananarivo', 'Toamasina', 'Antsirabe', 'Mahajanga', 'Fianarantsoa', 'Toliara', 'Antsiranana', 'Ambovombe', 'Ambanja', 'Manakara', 'Sambava', 'Ambatondrazaka', 'Morondava', 'Tôlanaro', 'Maroantsetra'] },
+  { code: 'MU', name: 'Mauritius', cities: ['Port Louis', 'Beau Bassin-Rose Hill', 'Vacoas-Phoenix', 'Curepipe', 'Quatre Bornes', 'Triolet', 'Goodlands', 'Centre de Flacq', 'Mahébourg', 'Rivière du Rempart', 'Bel Air', 'Grand Baie', 'Rose Belle', 'Pamplemousses', 'Mahebourg'] },
+  { code: 'SC', name: 'Seychelles', cities: ['Victoria', 'Anse Boileau', 'Beau Vallon', 'Cascade', 'Takamaka', 'Anse Royale', 'Baie Lazare', 'Bel Ombre', 'Grand Anse', 'La Digue'] },
+  { code: 'KM', name: 'Comoros', cities: ['Moroni', 'Mutsamudu', 'Fomboni', 'Domoni', 'Tsimbeo', 'Ouani', 'Mitsamiouli', 'Iconi', 'Ongojou', 'Mbeni'] },
   // Caribbean
-  { code: 'JM', name: 'Jamaica', cities: ['Kingston', 'Montego Bay', 'Spanish Town', 'Portmore', 'Mandeville', 'Ocho Rios', 'Negril', 'May Pen'] },
-  { code: 'TT', name: 'Trinidad and Tobago', cities: ['Port of Spain', 'San Fernando', 'Chaguanas', 'Arima', 'Couva', 'Point Fortin', 'Princes Town', 'Tunapuna'] },
-  { code: 'BB', name: 'Barbados', cities: ['Bridgetown', 'Speightstown', 'Oistins', 'Holetown', 'The Crane', 'St. Lawrence', 'Worthing', 'Hastings'] },
-  { code: 'GD', name: 'Grenada', cities: ['St. George\'s', 'Gouyave', 'Grenville', 'Victoria', 'Sauteurs', 'Hillsborough', 'Carriacou'] },
-  { code: 'BS', name: 'Bahamas', cities: ['Nassau', 'Freeport', 'Marsh Harbour', 'George Town', 'Coopers Town', 'High Rock', 'Andros Town', 'Duncan Town'] },
+  { code: 'JM', name: 'Jamaica', cities: ['Kingston', 'Montego Bay', 'Spanish Town', 'Portmore', 'Mandeville', 'Ocho Rios', 'Negril', 'May Pen', 'Savanna-la-Mar', 'Old Harbour', 'Linstead', 'St. Ann\'s Bay', 'Falmouth', 'Port Antonio', 'Morant Bay'] },
+  { code: 'TT', name: 'Trinidad and Tobago', cities: ['Port of Spain', 'San Fernando', 'Chaguanas', 'Arima', 'Couva', 'Point Fortin', 'Princes Town', 'Tunapuna', 'Scarborough', 'Sangre Grande', 'Rio Claro', 'Siparia', 'Penal', 'Debe', 'Marabella'] },
+  { code: 'BB', name: 'Barbados', cities: ['Bridgetown', 'Speightstown', 'Oistins', 'Holetown', 'The Crane', 'St. Lawrence', 'Worthing', 'Hastings', 'Bathsheba', 'Crane', 'Six Cross Roads', 'Warrens', 'Black Rock', 'Rockley', 'St. Philip'] },
+  { code: 'GD', name: 'Grenada', cities: ['St. George\'s', 'Gouyave', 'Grenville', 'Victoria', 'Sauteurs', 'Hillsborough', 'Carriacou', 'Grenville', 'St. David\'s', 'Tivoli', 'Woburn', 'Marquis', 'La Tante', 'Westerhall', 'Paradise'] },
+  { code: 'BS', name: 'Bahamas', cities: ['Nassau', 'Freeport', 'Marsh Harbour', 'George Town', 'Coopers Town', 'High Rock', 'Andros Town', 'Duncan Town', 'Alice Town', 'Matthew Town', 'Clarence Town', 'Dunmore Town', 'Rock Sound', 'Governor\'s Harbour', 'Spanish Wells'] },
+  { code: 'HT', name: 'Haiti', cities: ['Port-au-Prince', 'Cap-Haïtien', 'Gonaïves', 'Les Cayes', 'Jérémie', 'Port-de-Paix', 'Jacmel', 'Petionville', 'Delmas', 'Carrefour', 'Saint-Marc', 'Hinche', 'Miragoâne', 'Fort-Liberté', 'Trou-du-Nord'] },
+  { code: 'CU', name: 'Cuba', cities: ['Havana', 'Santiago de Cuba', 'Camagüey', 'Holguín', 'Santa Clara', 'Guantánamo', 'Bayamo', 'Cienfuegos', 'Pinar del Río', 'Matanzas', 'Cárdenas', 'Sancti Spíritus', 'Mariel', 'Manzanillo', 'Ciego de Ávila'] },
+  { code: 'DO', name: 'Dominican Republic', cities: ['Santo Domingo', 'Santiago', 'La Romana', 'San Pedro de Macorís', 'San Francisco de Macorís', 'Puerto Plata', 'Bavaro', 'Punta Cana', 'Higüey', 'Baní', 'Moca', 'Azua', 'Barahona', 'Bonao', 'San Cristóbal'] },
+  { code: 'PR', name: 'Puerto Rico', cities: ['San Juan', 'Bayamón', 'Carolina', 'Ponce', 'Caguas', 'Guaynabo', 'Mayagüez', 'Trujillo Alto', 'Arecibo', 'Fajardo', 'Cayey', 'Aguadilla', 'Humacao', 'Yauco', 'Vega Baja'] },
   // Latin America
-  { code: 'BR', name: 'Brazil', cities: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte', 'Manaus', 'Curitiba'] },
-  { code: 'MX', name: 'Mexico', cities: ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana', 'León', 'Juárez', 'Torreón'] },
-  { code: 'AR', name: 'Argentina', cities: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'Tucumán', 'La Plata', 'Mar del Plata', 'Salta'] },
-  { code: 'CO', name: 'Colombia', cities: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Soledad', 'Ibagué'] },
-  { code: 'PE', name: 'Peru', cities: ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 'Cusco', 'Huancayo'] },
-  { code: 'CL', name: 'Chile', cities: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta', 'Temuco', 'Rancagua', 'Talca'] },
-  { code: 'VE', name: 'Venezuela', cities: ['Caracas', 'Maracaibo', 'Valencia', 'Barquisimeto', 'Maracay', 'Ciudad Guayana', 'Barcelona', 'Maturín'] },
-  { code: 'EC', name: 'Ecuador', cities: ['Quito', 'Guayaquil', 'Cuenca', 'Santo Domingo', 'Machala', 'Durán', 'Manta', 'Portoviejo'] },
-  { code: 'GT', name: 'Guatemala', cities: ['Guatemala City', 'Mixco', 'Villa Nueva', 'Quetzaltenango', 'Escuintla', 'San Juan Sacatepéquez', 'Villa Canales', 'Petapa'] },
-  { code: 'DO', name: 'Dominican Republic', cities: ['Santo Domingo', 'Santiago', 'La Romana', 'San Pedro de Macorís', 'San Francisco de Macorís', 'Puerto Plata', 'Bavaro', 'Punta Cana'] },
+  { code: 'BR', name: 'Brazil', cities: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte', 'Manaus', 'Curitiba', 'Recife', 'Porto Alegre', 'Belém', 'Goiânia', 'Guarulhos', 'Campinas', 'São Luís'] },
+  { code: 'MX', name: 'Mexico', cities: ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana', 'León', 'Juárez', 'Torreón', 'Querétaro', 'San Luis Potosí', 'Mérida', 'Mexicali', 'Aguascalientes', 'Cuernavaca', 'Toluca'] },
+  { code: 'AR', name: 'Argentina', cities: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'Tucumán', 'La Plata', 'Mar del Plata', 'Salta', 'Santa Fe', 'San Juan', 'Resistencia', 'Santiago del Estero', 'Corrientes', 'Bahía Blanca', 'Posadas'] },
+  { code: 'CO', name: 'Colombia', cities: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Soledad', 'Ibagué', 'Bucaramanga', 'Santa Marta', 'Pereira', 'Villavicencio', 'Pasto', 'Manizales', 'Valledupar'] },
+  { code: 'PE', name: 'Peru', cities: ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 'Cusco', 'Huancayo', 'Chimbote', 'Pucallpa', 'Tacna', 'Ica', 'Juliaca', 'Sullana', 'Cajamarca'] },
+  { code: 'CL', name: 'Chile', cities: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta', 'Temuco', 'Rancagua', 'Talca', 'Arica', 'Iquique', 'Puerto Montt', 'Coquimbo', 'Valdivia', 'Osorno', 'Calama'] },
+  { code: 'VE', name: 'Venezuela', cities: ['Caracas', 'Maracaibo', 'Valencia', 'Barquisimeto', 'Maracay', 'Ciudad Guayana', 'Barcelona', 'Maturín', 'Ciudad Bolívar', 'San Cristóbal', 'Cumaná', 'Barinas', 'Mérida', 'Cabimas', 'Puerto La Cruz'] },
+  { code: 'EC', name: 'Ecuador', cities: ['Quito', 'Guayaquil', 'Cuenca', 'Santo Domingo', 'Machala', 'Durán', 'Manta', 'Portoviejo', 'Ambato', 'Riobamba', 'Quevedo', 'Loja', 'Milagro', 'Esmeraldas', 'Babahoyo'] },
+  { code: 'GT', name: 'Guatemala', cities: ['Guatemala City', 'Mixco', 'Villa Nueva', 'Quetzaltenango', 'Escuintla', 'San Juan Sacatepéquez', 'Villa Canales', 'Petapa', 'Chimaltenango', 'Huehuetenango', 'Cobán', 'Jutiapa', 'Mazatenango', 'Retalhuleu', 'Totonicapán'] },
+  { code: 'BO', name: 'Bolivia', cities: ['La Paz', 'Santa Cruz', 'Cochabamba', 'Sucre', 'Oruro', 'Tarija', 'Potosí', 'Trinidad', 'Riberalta', 'Montero', 'Quillacollo', 'Yacuiba', 'Camiri', 'Villazón', 'Tupiza'] },
+  { code: 'PY', name: 'Paraguay', cities: ['Asunción', 'Ciudad del Este', 'San Lorenzo', 'Luque', 'Capiatá', 'Lambaré', 'Fernando de la Mora', 'Encarnación', 'Pedro Juan Caballero', 'Villarrica', 'Coronel Oviedo', 'Concepción', 'Villa Hayes', 'Caaguazú', 'Itauguá'] },
+  { code: 'UY', name: 'Uruguay', cities: ['Montevideo', 'Salto', 'Ciudad de la Costa', 'Paysandú', 'Las Piedras', 'Rivera', 'Maldonado', 'Tacuarembó', 'Melo', 'Mercedes', 'Artigas', 'Minas', 'San José de Mayo', 'Durazno', 'Barros Blancos'] },
+  { code: 'NI', name: 'Nicaragua', cities: ['Managua', 'León', 'Masaya', 'Granada', 'Chinandega', 'Matagalpa', 'Estelí', 'Tipitapa', 'Jinotega', 'Bluefields', 'Juigalpa', 'Rivas', 'San Carlos', 'Ocotal', 'Puerto Cabezas'] },
+  { code: 'CR', name: 'Costa Rica', cities: ['San José', 'Cartago', 'Alajuela', 'Heredia', 'Puntarenas', 'Limón', 'Liberia', 'San Isidro', 'Desamparados', 'San Pedro', 'Curridabat', 'Escazú', 'San Ramón', 'Paraíso', 'Turrialba'] },
+  { code: 'PA', name: 'Panama', cities: ['Panama City', 'San Miguelito', 'Tocumen', 'David', 'Colón', 'La Chorrera', 'Santiago', 'Chitré', 'Aguadulce', 'Penonomé', 'Las Tablas', 'Changuinola', 'Alcalde Díaz', 'Arraiján', 'Vista Alegre'] },
+  { code: 'HN', name: 'Honduras', cities: ['Tegucigalpa', 'San Pedro Sula', 'Choloma', 'La Ceiba', 'El Progreso', 'Choluteca', 'Comayagua', 'Puerto Cortés', 'La Lima', 'Villanueva', 'Juticalpa', 'Siguatepeque', 'Danlí', 'Tela', 'Santa Rosa de Copán'] },
+  { code: 'SV', name: 'El Salvador', cities: ['San Salvador', 'Santa Ana', 'San Miguel', 'Mejicanos', 'Soyapango', 'Apopa', 'Delgado', 'Ahuachapán', 'San Martín', 'Sonsonate', 'Cuscatancingo', 'San Marcos', 'Usulután', 'Cojutepeque', 'Zacatecoluca'] },
+  { code: 'BZ', name: 'Belize', cities: ['Belize City', 'San Ignacio', 'Orange Walk', 'Belmopan', 'Dangriga', 'Corozal Town', 'San Pedro', 'Punta Gorda', 'Benque Viejo del Carmen', 'Ladyville', 'Hopkins', 'Placencia', 'Caye Caulker', 'Toledo', 'Shipyard'] },
   // Asia (Global South)
-  { code: 'IN', name: 'India', cities: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad'] },
-  { code: 'PK', name: 'Pakistan', cities: ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Peshawar', 'Islamabad'] },
-  { code: 'BD', name: 'Bangladesh', cities: ['Dhaka', 'Chittagong', 'Khulna', 'Rajshahi', 'Sylhet', 'Comilla', 'Barisal', 'Rangpur'] },
-  { code: 'PH', name: 'Philippines', cities: ['Manila', 'Quezon City', 'Caloocan', 'Davao', 'Cebu', 'Zamboanga', 'Antipolo', 'Pasig'] },
-  { code: 'VN', name: 'Vietnam', cities: ['Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Haiphong', 'Can Tho', 'Bien Hoa', 'Hue', 'Nha Trang'] },
-  { code: 'TH', name: 'Thailand', cities: ['Bangkok', 'Nonthaburi', 'Nakhon Ratchasima', 'Chiang Mai', 'Hat Yai', 'Udon Thani', 'Pak Kret', 'Khon Kaen'] },
-  { code: 'ID', name: 'Indonesia', cities: ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Palembang', 'Makassar', 'Tangerang'] },
-  { code: 'MY', name: 'Malaysia', cities: ['Kuala Lumpur', 'George Town', 'Ipoh', 'Shah Alam', 'Petaling Jaya', 'Johor Bahru', 'Malacca City', 'Kota Kinabalu'] },
-  // Middle East (Global South)
-  { code: 'IQ', name: 'Iraq', cities: ['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Najaf', 'Karbala', 'Sulaymaniyah', 'Kirkuk'] },
-  { code: 'YE', name: 'Yemen', cities: ['Sana\'a', 'Aden', 'Taiz', 'Al Hudaydah', 'Ibb', 'Dhamar', 'Al Mukalla', 'Sayyan'] },
-  { code: 'JO', name: 'Jordan', cities: ['Amman', 'Zarqa', 'Irbid', 'Russeifa', 'Wadi Al-Sir', 'Aqaba', 'Madaba', 'Salt'] },
-  { code: 'LB', name: 'Lebanon', cities: ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Nabatieh', 'Jounieh', 'Zahle', 'Baalbek'] },
-  { code: 'PS', name: 'Palestine', cities: ['Gaza', 'Hebron', 'Nablus', 'Ramallah', 'Jericho', 'Bethlehem', 'Jenin', 'Tulkarm'] },
+  { code: 'IN', name: 'India', cities: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad', 'Surat', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane'] },
+  { code: 'PK', name: 'Pakistan', cities: ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Peshawar', 'Islamabad', 'Quetta', 'Sargodha', 'Sialkot', 'Bahawalpur', 'Sukkur', 'Larkana', 'Sheikhupura'] },
+  { code: 'BD', name: 'Bangladesh', cities: ['Dhaka', 'Chittagong', 'Khulna', 'Rajshahi', 'Sylhet', 'Comilla', 'Barisal', 'Rangpur', 'Mymensingh', 'Jessore', 'Narayanganj', 'Gazipur', 'Bogra', 'Dinajpur', 'Cox\'s Bazar'] },
+  { code: 'PH', name: 'Philippines', cities: ['Manila', 'Quezon City', 'Caloocan', 'Davao', 'Cebu', 'Zamboanga', 'Antipolo', 'Pasig', 'Taguig', 'Makati', 'Bacolod', 'General Santos', 'Parañaque', 'Las Piñas', 'Valenzuela'] },
+  { code: 'VN', name: 'Vietnam', cities: ['Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Haiphong', 'Can Tho', 'Bien Hoa', 'Hue', 'Nha Trang', 'Vung Tau', 'Qui Nhon', 'Rach Gia', 'Long Xuyen', 'My Tho', 'Ca Mau', 'Bac Lieu'] },
+  { code: 'TH', name: 'Thailand', cities: ['Bangkok', 'Nonthaburi', 'Nakhon Ratchasima', 'Chiang Mai', 'Hat Yai', 'Udon Thani', 'Pak Kret', 'Khon Kaen', 'Phuket', 'Pattaya', 'Nakhon Si Thammarat', 'Surat Thani', 'Rayong', 'Chon Buri', 'Songkhla'] },
+  { code: 'ID', name: 'Indonesia', cities: ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Palembang', 'Makassar', 'Tangerang', 'Depok', 'Bekasi', 'Padang', 'Malang', 'Denpasar', 'Bandar Lampung', 'Pekanbaru'] },
+  { code: 'MY', name: 'Malaysia', cities: ['Kuala Lumpur', 'George Town', 'Ipoh', 'Shah Alam', 'Petaling Jaya', 'Johor Bahru', 'Malacca City', 'Kota Kinabalu', 'Kuching', 'Kota Kinabalu', 'Alor Setar', 'Miri', 'Seremban', 'Subang Jaya', 'Klang'] },
+  { code: 'MM', name: 'Myanmar', cities: ['Yangon', 'Mandalay', 'Naypyidaw', 'Mawlamyine', 'Bago', 'Pathein', 'Monywa', 'Sittwe', 'Meiktila', 'Mergui', 'Taunggyi', 'Myeik', 'Pyay', 'Hinthada', 'Lashio'] },
+  { code: 'KH', name: 'Cambodia', cities: ['Phnom Penh', 'Battambang', 'Siem Reap', 'Sihanoukville', 'Kampong Cham', 'Kampong Speu', 'Kampong Thom', 'Kandal', 'Takeo', 'Pursat', 'Kratie', 'Kampot', 'Prey Veng', 'Svay Rieng', 'Koh Kong'] },
+  { code: 'LA', name: 'Laos', cities: ['Vientiane', 'Pakse', 'Savannakhet', 'Luang Prabang', 'Xam Neua', 'Phonsavan', 'Thakhek', 'Muang Xay', 'Phonhong', 'Muang Pakxan', 'Ban Houayxay', 'Attapeu', 'Saravan', 'Phongsaly', 'Xaignabouli'] },
+  { code: 'LK', name: 'Sri Lanka', cities: ['Colombo', 'Dehiwala-Mount Lavinia', 'Moratuwa', 'Jaffna', 'Negombo', 'Pita Kotte', 'Sri Jayawardenepura Kotte', 'Kandy', 'Trincomalee', 'Kalmunai', 'Galle', 'Point Pedro', 'Batticaloa', 'Katunayake', 'Valvettithurai'] },
+  { code: 'NP', name: 'Nepal', cities: ['Kathmandu', 'Pokhara', 'Lalitpur', 'Biratnagar', 'Bharatpur', 'Birgunj', 'Dharan', 'Butwal', 'Janakpur', 'Hetauda', 'Itahari', 'Nepalgunj', 'Bhimdatta', 'Madhyapur Thimi', 'Birendranagar'] },
+  { code: 'BT', name: 'Bhutan', cities: ['Thimphu', 'Phuntsholing', 'Punakha', 'Paro', 'Gelephu', 'Wangdue Phodrang', 'Jakar', 'Samdrup Jongkhar', 'Trashigang', 'Mongar', 'Trongsa', 'Dagana', 'Pemagatshel', 'Zhemgang', 'Lhuntse'] },
+  { code: 'AF', name: 'Afghanistan', cities: ['Kabul', 'Kandahar', 'Herat', 'Mazar-i-Sharif', 'Kunduz', 'Jalalabad', 'Lashkar Gah', 'Taloqan', 'Pul-e-Khumri', 'Charikar', 'Ghazni', 'Khost', 'Sheberghan', 'Sar-e Pol', 'Gardez'] },
+  { code: 'IR', name: 'Iran', cities: ['Tehran', 'Mashhad', 'Isfahan', 'Karaj', 'Shiraz', 'Tabriz', 'Qom', 'Ahvaz', 'Kermanshah', 'Urmia', 'Rasht', 'Zahedan', 'Hamadan', 'Kerman', 'Yazd'] },
+  { code: 'IQ', name: 'Iraq', cities: ['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Najaf', 'Karbala', 'Sulaymaniyah', 'Kirkuk', 'Nasiriyah', 'Amarah', 'Ramadi', 'Fallujah', 'Samarra', 'Baqubah', 'Diyarbakir'] },
+  { code: 'YE', name: 'Yemen', cities: ['Sana\'a', 'Aden', 'Taiz', 'Al Hudaydah', 'Ibb', 'Dhamar', 'Al Mukalla', 'Sayyan', 'Zabid', 'Hajjah', 'Sa\'dah', 'Amran', 'Al Bayda', 'Al Jawf', 'Marib'] },
+  { code: 'JO', name: 'Jordan', cities: ['Amman', 'Zarqa', 'Irbid', 'Russeifa', 'Wadi Al-Sir', 'Aqaba', 'Madaba', 'Salt', 'Mafraq', 'Jarash', 'Karak', 'Tafilah', 'Ma\'an', 'Ajloun', 'Sahab'] },
+  { code: 'LB', name: 'Lebanon', cities: ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Nabatieh', 'Jounieh', 'Zahle', 'Baalbek', 'Byblos', 'Batroun', 'Jbeil', 'Zgharta', 'Halba', 'Marjayoun', 'Bint Jbeil'] },
+  { code: 'PS', name: 'Palestine', cities: ['Gaza', 'Hebron', 'Nablus', 'Ramallah', 'Jericho', 'Bethlehem', 'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jerusalem', 'Khan Yunis', 'Rafah', 'Deir al-Balah'] },
+  { code: 'SY', name: 'Syria', cities: ['Damascus', 'Aleppo', 'Homs', 'Latakia', 'Hama', 'Raqqa', 'Deir ez-Zor', 'Al-Hasakah', 'Qamishli', 'Tartus', 'Idlib', 'Daraa', 'As-Suwayda', 'Al-Bab', 'Manbij'] },
   // Oceania (Global South)
   { code: 'FJ', name: 'Fiji', cities: ['Suva', 'Lautoka', 'Nadi', 'Labasa', 'Ba', 'Levuka', 'Sigatoka', 'Nausori'] },
   { code: 'PG', name: 'Papua New Guinea', cities: ['Port Moresby', 'Lae', 'Arawa', 'Mount Hagen', 'Popondetta', 'Madang', 'Kokopo', 'Goroka'] },
@@ -134,9 +189,7 @@ export function UnifiedRegistrationForm({ showHeader = true }: UnifiedRegistrati
   const availableLocations = selectedCountryData?.cities || [];
 
   // Get WhatsApp link based on community type
-  const whatsappLink = communityType === 'local' 
-    ? 'https://chat.whatsapp.com/I9utNeip977H5k8oGW5KCy?mode=ems_copy_c'
-    : 'https://chat.whatsapp.com/CVWXWSeSfuKFj5UFmj6ESL?mode=ems_copy_c';
+  const whatsappLink = getWhatsAppGroupLink(communityType);
 
   // Get IP and location data on component mount
   useEffect(() => {

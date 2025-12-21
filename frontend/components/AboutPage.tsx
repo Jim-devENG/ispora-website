@@ -45,21 +45,24 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
       role: 'Co-Founder & Lead Visionary',
       bio: 'Oluwaseyi is a serial entrepreneur and founder of Genomac Holdings, a thriving biotechnology company driving innovation across the Global South and beyond. As the lead visionary behind the iSpora digital app, he provides strategic oversights and foundational support that sustain the evolution of the iSpora vision. His Genomac Innovation Hub, a subsidiary of Genomac Holdings, currently offers workspace, personnel, and strategic backing to iSpora—serving as a key engine supporting the platform\'s development.',
       initials: 'OO',
-      avatarSrc: '/Mr Seyi.jpg'
+      avatarSrc: '/Mr Seyi.jpg',
+      linkedin: 'https://www.linkedin.com/in/oluwaseyi-olawale-b9310a82/'
     },
     {
       name: 'Elijah Jesuseye Ogunyale',
       role: 'Co-Founder & CEO',
       bio: 'Elijah is a passionate youth leader and founder of EmQuip Leadership Trainers & Development Partners Limited, with a bold vision for Global South leadership transformation. His unique passion for the Global South Diaspora, leadership development, and national growth fuels iSpora\'s mission. As the founding CEO of iSpora, he drives community-building, leadership, and strategic ideation, shaping the movement and ensuring its alignment with the broader vision of Global South development.',
       initials: 'EO',
-      avatarSrc: '/Mr Elijah.jpg'
+      avatarSrc: '/Mr Elijah.jpg',
+      linkedin: 'https://www.linkedin.com/in/elijah-suigeneris/'
     },
     {
       name: 'James Enietan',
       role: 'Co-Founder & Chief Technology Officer (CTO)',
       bio: 'James Enietan is a multi-disciplinary builder — a software developer, brand architect, and founder shaping people, platforms, and products. With over a decade in tech, he has designed systems, built digital products, and advised initiatives across faith, leadership, and execution. He leads Teqxure, a solutions company evolving into a builder ecosystem, and founded Kingdom Light Bearers, a discipleship movement equipping believers to influence culture. He also co-founded Crysgarage, an online sound-mastering platform, and established The VisionSmith, a productivity and influence community. His work spans spiritual leadership, tech innovation, and organizational development — focused on building people and systems that outlast him.',
       initials: 'JE',
-      avatarSrc: '/Mr Jimmy.png'
+      avatarSrc: '/Mr Jimmy.png',
+      linkedin: 'https://www.linkedin.com/in/enietan-jimmy/'
     }
   ];
 
@@ -271,6 +274,22 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                     )}>
                       {member.bio}
                     </p>
+                    {member.linkedin && (
+                      <div className="mt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn(
+                            "w-full",
+                            index === 1 && "border-white/30 text-white hover:bg-white/10"
+                          )}
+                          onClick={() => window.open(member.linkedin, '_blank')}
+                        >
+                          <Linkedin className="h-4 w-4 mr-2" />
+                          LinkedIn Profile
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </div>
               </Card>
