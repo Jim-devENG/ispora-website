@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Partner } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle, XCircle, Download } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle, XCircle, Download, ChevronDown, ChevronUp, Phone, Mail, Globe, Building, Briefcase, Link as LinkIcon, Target, FileText, MessageSquare, MapPin, Linkedin } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
 import { exportPartnersToCSV } from '../../../src/utils/exportToCSV';
 
@@ -17,6 +17,7 @@ export function PartnersTab({ partners, setPartners, loading, error, onRefresh }
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const handleApprove = async (id: string) => {
     setUpdating(id);
@@ -74,6 +75,16 @@ export function PartnersTab({ partners, setPartners, loading, error, onRefresh }
     } finally {
       setDeleting(null);
     }
+  };
+
+  const toggleRow = (id: string) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
   };
 
   if (loading) {
@@ -148,6 +159,7 @@ export function PartnersTab({ partners, setPartners, loading, error, onRefresh }
           <table className="min-w-full text-xs">
             <thead className="bg-slate-900/80 text-slate-300">
               <tr>
+                <th className="px-4 py-3 text-left font-medium w-8"></th>
                 <th className="px-4 py-3 text-left font-medium">Name</th>
                 <th className="px-4 py-3 text-left font-medium">Organization</th>
                 <th className="px-4 py-3 text-left font-medium">Email</th>
@@ -160,72 +172,234 @@ export function PartnersTab({ partners, setPartners, loading, error, onRefresh }
             <tbody className="divide-y divide-slate-800">
               {partners.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
                     No partners found
                   </td>
                 </tr>
               ) : (
-                partners.map((partner) => (
-                  <tr key={partner.id} className="hover:bg-slate-900/60 transition-colors">
-                    <td className="px-4 py-3 text-slate-200">
-                      {partner.name || partner.fullName || '—'}
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">
-                      {partner.organization || partner.orgName || '—'}
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">{partner.email}</td>
-                    <td className="px-4 py-3 text-slate-400">{partner.country || '—'}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={partner.status} />
-                    </td>
-                    <td className="px-4 py-3 text-slate-400">
-                      {new Date(partner.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        {partner.status !== 'approved' && (
+                partners.map((partner) => {
+                  const isExpanded = expandedRows.has(partner.id);
+                  // Map snake_case from API to camelCase for display
+                  const mappedPartner = {
+                    ...partner,
+                    fullName: partner.fullName || partner.full_name || partner.name,
+                    orgName: partner.orgName || partner.org_name || partner.organization,
+                    orgType: partner.orgType || partner.org_type,
+                    role: partner.role,
+                    phone: partner.phone,
+                    linkedin: partner.linkedin,
+                    country: partner.country,
+                    orgWebsite: partner.orgWebsite || partner.org_website,
+                    orgSocialMedia: partner.orgSocialMedia || partner.org_social_media,
+                    partnershipFocus: partner.partnershipFocus || partner.partnership_focus || [],
+                    otherFocus: partner.otherFocus || partner.other_focus,
+                    aboutWork: partner.aboutWork || partner.about_work,
+                    whyPartner: partner.whyPartner || partner.why_partner,
+                    howContribute: partner.howContribute || partner.how_contribute,
+                    whatExpect: partner.whatExpect || partner.what_expect,
+                    additionalNotes: partner.additionalNotes || partner.additional_notes
+                  };
+                  return (
+                    <React.Fragment key={partner.id}>
+                      <tr className="hover:bg-slate-900/60 transition-colors">
+                        <td className="px-2 py-3">
                           <button
-                            onClick={() => handleApprove(partner.id)}
-                            disabled={updating === partner.id}
-                            className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs transition-colors disabled:opacity-50"
-                            title="Approve"
+                            onClick={() => toggleRow(partner.id)}
+                            className="text-slate-400 hover:text-slate-200 transition-colors"
+                            title={isExpanded ? 'Collapse details' : 'Expand details'}
                           >
-                            {updating === partner.id ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4" />
                             ) : (
-                              <CheckCircle className="h-3 w-3" />
+                              <ChevronDown className="h-4 w-4" />
                             )}
                           </button>
-                        )}
-                        {partner.status !== 'rejected' && (
-                          <button
-                            onClick={() => handleReject(partner.id)}
-                            disabled={updating === partner.id}
-                            className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
-                            title="Reject"
-                          >
-                            {updating === partner.id ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <XCircle className="h-3 w-3" />
+                        </td>
+                        <td className="px-4 py-3 text-slate-200">
+                          {mappedPartner.fullName || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-slate-300">
+                          {mappedPartner.orgName || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-slate-300">{partner.email}</td>
+                        <td className="px-4 py-3 text-slate-400">{mappedPartner.country || '—'}</td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={partner.status} />
+                        </td>
+                        <td className="px-4 py-3 text-slate-400">
+                          {new Date(partner.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {partner.status !== 'approved' && (
+                              <button
+                                onClick={() => handleApprove(partner.id)}
+                                disabled={updating === partner.id}
+                                className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                                title="Approve"
+                              >
+                                {updating === partner.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <CheckCircle className="h-3 w-3" />
+                                )}
+                              </button>
                             )}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(partner.id, partner.name || partner.fullName || 'Unknown')}
-                          disabled={deleting === partner.id}
-                          className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
-                        >
-                          {deleting === partner.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-3 w-3" />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                            {partner.status !== 'rejected' && (
+                              <button
+                                onClick={() => handleReject(partner.id)}
+                                disabled={updating === partner.id}
+                                className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                                title="Reject"
+                              >
+                                {updating === partner.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <XCircle className="h-3 w-3" />
+                                )}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDelete(partner.id, mappedPartner.fullName || 'Unknown')}
+                              disabled={deleting === partner.id}
+                              className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors disabled:opacity-50"
+                            >
+                              {deleting === partner.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-3 w-3" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr>
+                          <td colSpan={8} className="px-4 py-4 bg-slate-900/40">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              {/* Contact Information */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <Mail className="h-4 w-4" /> Contact Information
+                                </h4>
+                                {mappedPartner.phone && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <Phone className="h-3 w-3 text-slate-400" />
+                                    <span>Phone: {mappedPartner.phone}</span>
+                                  </div>
+                                )}
+                                {mappedPartner.country && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <MapPin className="h-3 w-3 text-slate-400" />
+                                    <span>Country: {mappedPartner.country}</span>
+                                  </div>
+                                )}
+                                {mappedPartner.linkedin && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <Linkedin className="h-3 w-3 text-slate-400" />
+                                    <a href={mappedPartner.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                                      LinkedIn Profile
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Organization Information */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <Building className="h-4 w-4" /> Organization Details
+                                </h4>
+                                {mappedPartner.orgType && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Organization Type:</span> {mappedPartner.orgType}
+                                  </div>
+                                )}
+                                {mappedPartner.role && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Role:</span> {mappedPartner.role}
+                                  </div>
+                                )}
+                                {mappedPartner.orgWebsite && (
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <LinkIcon className="h-3 w-3 text-slate-400" />
+                                    <a href={mappedPartner.orgWebsite} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                                      Website
+                                    </a>
+                                  </div>
+                                )}
+                                {mappedPartner.orgSocialMedia && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400">Social Media:</span> {mappedPartner.orgSocialMedia}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Partnership Focus */}
+                              {(mappedPartner.partnershipFocus?.length > 0 || mappedPartner.otherFocus) && (
+                                <div className="space-y-2">
+                                  <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                    <Target className="h-4 w-4" /> Partnership Focus
+                                  </h4>
+                                  {mappedPartner.partnershipFocus && mappedPartner.partnershipFocus.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                      {mappedPartner.partnershipFocus.map((focus: string, idx: number) => (
+                                        <span key={idx} className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs">
+                                          {focus}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {mappedPartner.otherFocus && (
+                                    <div className="text-slate-300">
+                                      <span className="text-slate-400">Other Focus:</span> {mappedPartner.otherFocus}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Partnership Details */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                  <MessageSquare className="h-4 w-4" /> Partnership Details
+                                </h4>
+                                {mappedPartner.aboutWork && (
+                                  <div className="text-slate-300 mb-3">
+                                    <span className="text-slate-400 font-medium">About Your Work:</span>
+                                    <p className="mt-1 text-slate-400 italic">{mappedPartner.aboutWork}</p>
+                                  </div>
+                                )}
+                                {mappedPartner.whyPartner && (
+                                  <div className="text-slate-300 mb-3">
+                                    <span className="text-slate-400 font-medium">Why Partner:</span>
+                                    <p className="mt-1 text-slate-400 italic">{mappedPartner.whyPartner}</p>
+                                  </div>
+                                )}
+                                {mappedPartner.howContribute && (
+                                  <div className="text-slate-300 mb-3">
+                                    <span className="text-slate-400 font-medium">How You Can Contribute:</span>
+                                    <p className="mt-1 text-slate-400 italic">{mappedPartner.howContribute}</p>
+                                  </div>
+                                )}
+                                {mappedPartner.whatExpect && (
+                                  <div className="text-slate-300 mb-3">
+                                    <span className="text-slate-400 font-medium">What You Expect:</span>
+                                    <p className="mt-1 text-slate-400 italic">{mappedPartner.whatExpect}</p>
+                                  </div>
+                                )}
+                                {mappedPartner.additionalNotes && (
+                                  <div className="text-slate-300">
+                                    <span className="text-slate-400 font-medium">Additional Notes:</span>
+                                    <p className="mt-1 text-slate-400 italic">{mappedPartner.additionalNotes}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })
               )}
             </tbody>
           </table>

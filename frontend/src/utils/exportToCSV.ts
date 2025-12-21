@@ -127,13 +127,48 @@ export function exportRegistrationsToCSV(registrations: any[]) {
  * Export partners to CSV
  */
 export function exportPartnersToCSV(partners: any[]) {
-  const headers = ['Name', 'Email', 'Organization', 'Country', 'Status', 'Created At'];
+  const headers = [
+    'Name',
+    'Email',
+    'Phone',
+    'Country',
+    'LinkedIn',
+    'Organization Name',
+    'Organization Type',
+    'Role',
+    'Organization Website',
+    'Organization Social Media',
+    'Partnership Focus',
+    'Other Focus',
+    'About Your Work',
+    'Why Partner',
+    'How You Can Contribute',
+    'What You Expect',
+    'Additional Notes',
+    'Status',
+    'Created At'
+  ];
   
   const csvData = partners.map(partner => ({
-    'Name': partner.fullName || partner.name || '',
+    'Name': partner.fullName || partner.full_name || partner.name || '',
     'Email': partner.email || '',
-    'Organization': partner.orgName || partner.organization || '',
+    'Phone': partner.phone || '',
     'Country': partner.country || '',
+    'LinkedIn': partner.linkedin || '',
+    'Organization Name': partner.orgName || partner.org_name || partner.organization || '',
+    'Organization Type': partner.orgType || partner.org_type || '',
+    'Role': partner.role || '',
+    'Organization Website': partner.orgWebsite || partner.org_website || '',
+    'Organization Social Media': partner.orgSocialMedia || partner.org_social_media || '',
+    'Partnership Focus': Array.isArray(partner.partnershipFocus || partner.partnership_focus) 
+      ? (partner.partnershipFocus || partner.partnership_focus || []).join('; ') 
+      : '',
+    'Other Focus': partner.otherFocus || partner.other_focus || '',
+    'About Your Work': partner.aboutWork || partner.about_work || '',
+    'Why Partner': partner.whyPartner || partner.why_partner || '',
+    'How You Can Contribute': partner.howContribute || partner.how_contribute || '',
+    'What You Expect': partner.whatExpect || partner.what_expect || '',
+    'Additional Notes': partner.additionalNotes || partner.additional_notes || '',
     'Status': partner.status || '',
     'Created At': partner.created_at || ''
   }));

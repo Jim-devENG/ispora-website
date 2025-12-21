@@ -82,12 +82,27 @@ export interface Partner {
   fullName?: string;
   name?: string; // API may return either
   email: string;
+  phone?: string | null;
+  country?: string;
+  linkedin?: string | null;
   orgName?: string;
   organization?: string; // API may return either
-  country?: string;
+  orgType?: string | null;
+  role?: string | null;
+  orgWebsite?: string | null;
+  orgSocialMedia?: string | null;
+  partnershipFocus?: string[] | null;
+  otherFocus?: string | null;
+  aboutWork?: string | null;
+  whyPartner?: string | null;
+  howContribute?: string | null;
+  whatExpect?: string | null;
+  additionalNotes?: string | null;
   status: PartnerStatus;
   created_at: string;
   updated_at?: string;
+  ip_address?: string | null;
+  user_agent?: string | null;
 }
 
 export type JoinStatus = 'pending' | 'approved' | 'rejected';
