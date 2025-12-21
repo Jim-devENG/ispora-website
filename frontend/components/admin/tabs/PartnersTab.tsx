@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { Partner } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Trash2, CheckCircle, XCircle, Download } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
+import { exportPartnersToCSV } from '../../../src/utils/exportToCSV';
 
 interface PartnersTabProps {
   partners: Partner[];
@@ -122,13 +123,24 @@ export function PartnersTab({ partners, setPartners, loading, error, onRefresh }
         <h2 className="text-xl font-semibold text-slate-50">
           Partners ({partners.length})
         </h2>
-        <button
-          onClick={onRefresh}
-          className="flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportPartnersToCSV(partners)}
+            disabled={partners.length === 0}
+            className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-colors"
+            title="Download as CSV"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </button>
+          <button
+            onClick={onRefresh}
+            className="flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">

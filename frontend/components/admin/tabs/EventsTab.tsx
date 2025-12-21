@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import type { Event } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X, Download } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
 import { ImageUpload } from '../../ui/ImageUpload';
+import { exportEventsToCSV } from '../../../src/utils/exportToCSV';
 
 interface EventsTabProps {
   events: Event[];
@@ -195,6 +196,15 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
           Events ({events.length})
         </h2>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportEventsToCSV(events)}
+            disabled={events.length === 0}
+            className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-colors"
+            title="Download as CSV"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </button>
           <button
             onClick={() => openModal()}
             className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm transition-colors"

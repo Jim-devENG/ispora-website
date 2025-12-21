@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { Contact } from '../../../src/types/admin';
-import { Loader2, AlertCircle, RefreshCw, Trash2, Mail, Eye, Archive } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Trash2, Mail, Eye, Archive, Download } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
+import { exportContactsToCSV } from '../../../src/utils/exportToCSV';
 
 interface ContactTabProps {
   contacts: Contact[];
@@ -106,13 +107,24 @@ export function ContactTab({ contacts, setContacts, loading, error, onRefresh }:
             {contacts.length} {contacts.length === 1 ? 'submission' : 'submissions'}
           </p>
         </div>
-        <button
-          onClick={onRefresh}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors flex items-center"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportContactsToCSV(contacts)}
+            disabled={contacts.length === 0}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center"
+            title="Download as CSV"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </button>
+          <button
+            onClick={onRefresh}
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors flex items-center"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Error Messages */}
