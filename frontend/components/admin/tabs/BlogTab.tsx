@@ -3,6 +3,7 @@ import type { BlogPost } from '../../../src/types/admin';
 import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X, Download } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
 import { ImageUpload } from '../../ui/ImageUpload';
+import { RichTextEditor } from '../../ui/RichTextEditor';
 import { exportBlogPostsToCSV } from '../../../src/utils/exportToCSV';
 
 interface BlogTabProps {
@@ -370,11 +371,11 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Content *
                 </label>
-                <textarea
+                <RichTextEditor
                   value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  rows={10}
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                  onChange={(value) => setFormData({ ...formData, content: value })}
+                  placeholder="Write your blog post content here..."
+                  className="w-full"
                 />
               </div>
 

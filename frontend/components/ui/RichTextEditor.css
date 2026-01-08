@@ -1,0 +1,216 @@
+/* Rich Text Editor Dark Theme Styling */
+.rich-text-editor-wrapper {
+  background: rgb(15, 23, 42); /* slate-900 */
+  border-radius: 0.5rem;
+  border: 1px solid rgb(51, 65, 85); /* slate-700 */
+}
+
+.rich-text-editor-wrapper .ql-container {
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: rgb(226, 232, 240); /* slate-200 */
+  background: rgb(15, 23, 42); /* slate-900 */
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  min-height: 300px;
+}
+
+.rich-text-editor-wrapper .ql-container.ql-snow {
+  border: none;
+}
+
+.rich-text-editor-wrapper .ql-editor {
+  min-height: 300px;
+  padding: 1rem;
+  color: rgb(226, 232, 240); /* slate-200 */
+  line-height: 1.75;
+}
+
+.rich-text-editor-wrapper .ql-editor.ql-blank::before {
+  color: rgb(148, 163, 184); /* slate-400 */
+  font-style: normal;
+}
+
+.rich-text-editor-wrapper .ql-toolbar {
+  background: rgb(30, 41, 59); /* slate-800 */
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border: none;
+  border-bottom: 1px solid rgb(51, 65, 85); /* slate-700 */
+  padding: 0.75rem;
+}
+
+.rich-text-editor-wrapper .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid rgb(51, 65, 85); /* slate-700 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-stroke {
+  stroke: rgb(203, 213, 225); /* slate-300 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-fill {
+  fill: rgb(203, 213, 225); /* slate-300 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-picker-label {
+  color: rgb(203, 213, 225); /* slate-300 */
+  border-color: rgb(51, 65, 85); /* slate-700 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-picker-options {
+  background: rgb(30, 41, 59); /* slate-800 */
+  border: 1px solid rgb(51, 65, 85); /* slate-700 */
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-picker-item {
+  color: rgb(203, 213, 225); /* slate-300 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-picker-item:hover {
+  background: rgb(51, 65, 85); /* slate-700 */
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-picker-item.ql-selected {
+  background: rgb(67, 56, 202); /* indigo-600 */
+  color: white;
+}
+
+.rich-text-editor-wrapper .ql-toolbar button {
+  color: rgb(203, 213, 225); /* slate-300 */
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  padding: 0.375rem;
+  margin: 0 0.125rem;
+  transition: all 0.2s;
+}
+
+.rich-text-editor-wrapper .ql-toolbar button:hover {
+  background: rgb(51, 65, 85); /* slate-700 */
+  border-color: rgb(51, 65, 85); /* slate-700 */
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.rich-text-editor-wrapper .ql-toolbar button.ql-active {
+  background: rgb(67, 56, 202); /* indigo-600 */
+  border-color: rgb(67, 56, 202); /* indigo-600 */
+  color: white;
+}
+
+.rich-text-editor-wrapper .ql-toolbar button.ql-active .ql-stroke {
+  stroke: white;
+}
+
+.rich-text-editor-wrapper .ql-toolbar button.ql-active .ql-fill {
+  fill: white;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-formats {
+  margin-right: 0.75rem;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-formats:not(:last-child)::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 1.5rem;
+  background: rgb(51, 65, 85); /* slate-700 */
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Editor content styling */
+.rich-text-editor-wrapper .ql-editor h1,
+.rich-text-editor-wrapper .ql-editor h2,
+.rich-text-editor-wrapper .ql-editor h3,
+.rich-text-editor-wrapper .ql-editor h4,
+.rich-text-editor-wrapper .ql-editor h5,
+.rich-text-editor-wrapper .ql-editor h6 {
+  color: rgb(226, 232, 240); /* slate-200 */
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-editor-wrapper .ql-editor h1 {
+  font-size: 2rem;
+}
+
+.rich-text-editor-wrapper .ql-editor h2 {
+  font-size: 1.5rem;
+}
+
+.rich-text-editor-wrapper .ql-editor h3 {
+  font-size: 1.25rem;
+}
+
+.rich-text-editor-wrapper .ql-editor p {
+  margin-bottom: 0.75rem;
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.rich-text-editor-wrapper .ql-editor a {
+  color: rgb(99, 102, 241); /* indigo-500 */
+  text-decoration: underline;
+}
+
+.rich-text-editor-wrapper .ql-editor blockquote {
+  border-left: 4px solid rgb(67, 56, 202); /* indigo-600 */
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: rgb(203, 213, 225); /* slate-300 */
+}
+
+.rich-text-editor-wrapper .ql-editor code {
+  background: rgb(30, 41, 59); /* slate-800 */
+  color: rgb(139, 92, 246); /* violet-500 */
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.rich-text-editor-wrapper .ql-editor pre {
+  background: rgb(30, 41, 59); /* slate-800 */
+  border: 1px solid rgb(51, 65, 85); /* slate-700 */
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.rich-text-editor-wrapper .ql-editor pre code {
+  background: transparent;
+  color: rgb(226, 232, 240); /* slate-200 */
+  padding: 0;
+}
+
+.rich-text-editor-wrapper .ql-editor ul,
+.rich-text-editor-wrapper .ql-editor ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.rich-text-editor-wrapper .ql-editor li {
+  margin: 0.25rem 0;
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+/* Focus state */
+.rich-text-editor-wrapper:focus-within {
+  outline: 2px solid rgb(99, 102, 241); /* indigo-500 */
+  outline-offset: 2px;
+  border-color: rgb(99, 102, 241); /* indigo-500 */
+}
+
+/* Image upload styling */
+.rich-text-editor-wrapper .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+}
+
