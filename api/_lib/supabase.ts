@@ -6,12 +6,22 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Validate environment variables synchronously
 function validateEnvVars() {
+  const missing: string[] = [];
+  
   if (!SUPABASE_URL || SUPABASE_URL.trim() === '') {
-    throw new Error('Missing SUPABASE_URL environment variable. Required for Supabase connection.');
+    missing.push('SUPABASE_URL');
   }
   
   if (!SUPABASE_SERVICE_ROLE_KEY || SUPABASE_SERVICE_ROLE_KEY.trim() === '') {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable. Required for Supabase connection.');
+    missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  }
+  
+  if (missing.length > 0) {
+    const errorMsg = `Missing required environment variable(s): ${missing.join(', ')}. ` +
+      `Please configure these in Vercel Dashboard → Settings → Environment Variables. ` +
+      `Check scripts/SUPABASE_ENV.md for setup instructions.`;
+    console.error('[SUPABASE_CLIENT] Validation failed:', errorMsg);
+    throw new Error(errorMsg);
   }
 }
 
