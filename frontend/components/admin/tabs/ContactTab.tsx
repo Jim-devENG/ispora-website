@@ -25,7 +25,7 @@ export function ContactTab({ contacts, setContacts, loading, error, onRefresh }:
 
     try {
       const response = await apiClient.patch<Contact>(
-        `/api/contact/${id}`,
+        `/api/contact?id=${id}`,
         { status }
       );
       setContacts(contacts.map(c => c.id === id ? response : c));
@@ -47,7 +47,7 @@ export function ContactTab({ contacts, setContacts, loading, error, onRefresh }:
     setDeleteError(null);
 
     try {
-      await apiClient.del(`/api/contact/${id}`);
+      await apiClient.del(`/api/contact?id=${id}`);
       setContacts(contacts.filter(c => c.id !== id));
       console.log('[ContactTab] Contact deleted:', id);
     } catch (error: any) {
