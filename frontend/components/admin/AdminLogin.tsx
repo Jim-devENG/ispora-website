@@ -10,7 +10,7 @@ interface AdminLoginProps {
   onLogin: () => void;
 }
 
-const ADMIN_PASSWORD = 'ispora2025';
+const ADMIN_PASSWORD = 'IamanadmininiSpora(100%)';
 
 export function AdminLogin({ onLogin }: AdminLoginProps) {
   const [password, setPassword] = useState('');

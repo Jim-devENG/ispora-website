@@ -104,10 +104,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         // Get all counts in parallel
         const [totalResult, dailyResult, weeklyResult, monthlyResult, recentResult] = await Promise.all([
-          supabase.from('registrations').select('id', { count: 'exact', head: true }),
-          supabase.from('registrations').select('id', { count: 'exact', head: true }).gte('created_at', oneDayAgo),
-          supabase.from('registrations').select('id', { count: 'exact', head: true }).gte('created_at', oneWeekAgo),
-          supabase.from('registrations').select('id', { count: 'exact', head: true }).gte('created_at', oneMonthAgo),
+          supabase.from('registrations').select('*', { count: 'exact', head: true }),
+          supabase.from('registrations').select('*', { count: 'exact', head: true }).gte('created_at', oneDayAgo),
+          supabase.from('registrations').select('*', { count: 'exact', head: true }).gte('created_at', oneWeekAgo),
+          supabase.from('registrations').select('*', { count: 'exact', head: true }).gte('created_at', oneMonthAgo),
           supabase.from('registrations').select('*').order('created_at', { ascending: false }).limit(10),
         ]);
 

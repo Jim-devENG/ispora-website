@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DashboardStats, Registration } from '../../../src/types/admin';
-import { Users, TrendingUp, Calendar, Globe, Loader2, AlertCircle } from 'lucide-react';
+import { Users, TrendingUp, Calendar, Globe, Loader2, AlertCircle, Eye, Monitor } from 'lucide-react';
 
 interface OverviewTabProps {
   stats: DashboardStats | null;
@@ -39,40 +39,76 @@ export function OverviewTab({ stats, statsLoading, statsError, registrations }: 
 
   return (
     <div className="space-y-6">
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="Total Registrations"
-          value={stats.totalRegistrations}
-          icon={Users}
-          color="indigo"
-        />
-        <StatCard
-          label="Today"
-          value={stats.todayRegistrations}
-          icon={TrendingUp}
-          color="green"
-        />
-        <StatCard
-          label="This Week"
-          value={stats.thisWeekRegistrations}
-          icon={Calendar}
-          color="blue"
-        />
-        <StatCard
-          label="This Month"
-          value={stats.thisMonthRegistrations}
-          icon={TrendingUp}
-          color="purple"
-        />
+      {/* Registration Stat Cards */}
+      <div>
+        <h3 className="text-lg font-semibold text-slate-50 mb-4">Registrations</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            label="Total Registrations"
+            value={stats.totalRegistrations}
+            icon={Users}
+            color="indigo"
+          />
+          <StatCard
+            label="Today"
+            value={stats.todayRegistrations}
+            icon={TrendingUp}
+            color="green"
+          />
+          <StatCard
+            label="This Week"
+            value={stats.thisWeekRegistrations}
+            icon={Calendar}
+            color="blue"
+          />
+          <StatCard
+            label="This Month"
+            value={stats.thisMonthRegistrations}
+            icon={TrendingUp}
+            color="purple"
+          />
+        </div>
       </div>
 
+      {/* Visit Stat Cards */}
+      {stats.visitStats && (
+        <div>
+          <h3 className="text-lg font-semibold text-slate-50 mb-4">Website Visits</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              label="Total Visits"
+              value={stats.visitStats.total}
+              icon={Eye}
+              color="orange"
+            />
+            <StatCard
+              label="Today"
+              value={stats.visitStats.daily}
+              icon={TrendingUp}
+              color="green"
+            />
+            <StatCard
+              label="This Week"
+              value={stats.visitStats.weekly}
+              icon={Calendar}
+              color="blue"
+            />
+            <StatCard
+              label="This Month"
+              value={stats.visitStats.monthly}
+              icon={TrendingUp}
+              color="purple"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Countries */}
+        {/* Top Countries (Registrations) */}
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-slate-50 mb-4 flex items-center">
             <Globe className="h-5 w-5 mr-2 text-indigo-400" />
-            Top Countries
+            Top Countries (Registrations)
           </h2>
           {stats.topCountries && stats.topCountries.length > 0 ? (
             <div className="space-y-3">
@@ -91,30 +127,72 @@ export function OverviewTab({ stats, statsLoading, statsError, registrations }: 
           )}
         </div>
 
-        {/* Recent Registrations */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-slate-50 mb-4 flex items-center">
-            <Users className="h-5 w-5 mr-2 text-indigo-400" />
-            Recent Registrations
-          </h2>
-          {recentRegistrations.length > 0 ? (
+        {/* Top Countries (Visits) */}
+        {stats.visitStats && stats.visitStats.topCountries && stats.visitStats.topCountries.length > 0 && (
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-slate-50 mb-4 flex items-center">
+              <Globe className="h-5 w-5 mr-2 text-orange-400" />
+              Top Countries (Visits)
+            </h2>
             <div className="space-y-3">
-              {recentRegistrations.map((reg) => (
-                <div key={reg.id} className="flex items-center justify-between text-sm">
-                  <div>
-                    <p className="text-slate-200 font-medium">{reg.name}</p>
-                    <p className="text-slate-400">{reg.countryOfResidence}</p>
+              {stats.visitStats.topCountries.map((item, index) => (
+                <div key={item.country} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <span className="text-slate-400 text-sm w-6">{index + 1}.</span>
+                    <span className="text-slate-200">{item.country}</span>
                   </div>
-                  <span className="text-slate-400">
-                    {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
-                  </span>
+                  <span className="text-slate-400 text-sm">{item.count} visits</span>
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-slate-400 text-sm">No recent registrations</p>
-          )}
+          </div>
+        )}
+      </div>
+
+      {/* Top Pages */}
+      {stats.visitStats && stats.visitStats.topPages && stats.visitStats.topPages.length > 0 && (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-slate-50 mb-4 flex items-center">
+            <Monitor className="h-5 w-5 mr-2 text-orange-400" />
+            Most Visited Pages
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {stats.visitStats.topPages.map((item, index) => (
+              <div key={item.page} className="flex items-center justify-between bg-slate-800/50 rounded-lg p-3">
+                <div className="flex items-center">
+                  <span className="text-slate-400 text-sm w-6">{index + 1}.</span>
+                  <span className="text-slate-200 font-medium">{item.page || 'Unknown'}</span>
+                </div>
+                <span className="text-slate-400 text-sm">{item.count} visits</span>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+
+      {/* Recent Registrations */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-slate-50 mb-4 flex items-center">
+          <Users className="h-5 w-5 mr-2 text-indigo-400" />
+          Recent Registrations
+        </h2>
+        {recentRegistrations.length > 0 ? (
+          <div className="space-y-3">
+            {recentRegistrations.map((reg) => (
+              <div key={reg.id} className="flex items-center justify-between text-sm">
+                <div>
+                  <p className="text-slate-200 font-medium">{reg.name}</p>
+                  <p className="text-slate-400">{reg.countryOfResidence}</p>
+                </div>
+                <span className="text-slate-400">
+                  {new Date(reg.createdAt || reg.created_at || '').toLocaleDateString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-400 text-sm">No recent registrations</p>
+        )}
       </div>
     </div>
   );
@@ -129,13 +207,14 @@ function StatCard({
   label: string;
   value: number;
   icon: React.ComponentType<{ className?: string }>;
-  color: 'indigo' | 'green' | 'blue' | 'purple';
+  color: 'indigo' | 'green' | 'blue' | 'purple' | 'orange';
 }) {
   const colorClasses = {
     indigo: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
     green: 'bg-green-500/10 text-green-400 border-green-500/20',
     blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   };
 
   return (

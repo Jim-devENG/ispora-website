@@ -29,6 +29,7 @@ import { CareersPage } from './components/CareersPage';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminAccess } from './components/AdminAccess';
 import { Footer } from './components/Footer';
+import { trackPageVisit } from './utils/visitTracker';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = React.useState('home');
@@ -67,14 +68,18 @@ function AppContent() {
 
     const applyPath = () => {
       const path = window.location.pathname.replace('/', '') || 'home';
+      let pageToSet = 'home';
+      
       if (validPages.includes(path)) {
-        setCurrentPage(path);
+        pageToSet = path;
       } else if (path.startsWith('blog-post-') || path.startsWith('event-')) {
         // Handle blog post and event detail pages
-        setCurrentPage(path);
-      } else {
-        setCurrentPage('home');
+        pageToSet = path;
       }
+      
+      setCurrentPage(pageToSet);
+      // Track page visit
+      trackPageVisit(pageToSet);
     };
 
     // Apply on initial load
@@ -92,6 +97,8 @@ function AppContent() {
       window.history.pushState({}, '', newPath);
     }
     setCurrentPage(page);
+    // Track page visit
+    trackPageVisit(page);
     // Scroll to target if specified, otherwise scroll to top
     if (scrollTarget) {
       setTimeout(() => {

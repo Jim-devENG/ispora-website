@@ -139,6 +139,17 @@ export interface DashboardStats {
   thisMonthRegistrations: number;
   topCountries: { country: string; count: number }[];
   recentActivity: Registration[];
+  // Visit statistics
+  visitStats?: VisitStats | null;
+}
+
+export interface VisitStats {
+  total: number;
+  daily: number;
+  weekly: number;
+  monthly: number;
+  topCountries: { country: string; count: number }[];
+  topPages: { page: string; count: number }[];
 }
 
 /**

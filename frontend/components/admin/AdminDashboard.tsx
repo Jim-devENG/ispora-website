@@ -30,6 +30,7 @@ import { EventsTab } from './tabs/EventsTab';
 import { PartnersTab } from './tabs/PartnersTab';
 import { JoinTab } from './tabs/JoinTab';
 import { ContactTab } from './tabs/ContactTab';
+import { VisitsTab } from './tabs/VisitsTab';
 import {
   LayoutDashboard,
   Users,
@@ -41,9 +42,10 @@ import {
   LogOut,
   Menu,
   X,
+  Eye,
 } from 'lucide-react';
 
-type TabId = 'overview' | 'registrations' | 'blog' | 'events' | 'partners' | 'join' | 'contact';
+type TabId = 'overview' | 'registrations' | 'blog' | 'events' | 'partners' | 'join' | 'contact' | 'visits';
 
 interface NavItem {
   id: TabId;
@@ -54,6 +56,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'overview', label: 'Overview', icon: <LayoutDashboard className="h-5 w-5" /> },
   { id: 'registrations', label: 'Registrations', icon: <Users className="h-5 w-5" /> },
+  { id: 'visits', label: 'Visits', icon: <Eye className="h-5 w-5" /> },
   { id: 'blog', label: 'Blog Posts', icon: <FileText className="h-5 w-5" /> },
   { id: 'events', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
   { id: 'partners', label: 'Partners', icon: <Handshake className="h-5 w-5" /> },
@@ -102,6 +105,11 @@ export function AdminDashboard() {
   const [contactsLoading, setContactsLoading] = useState(false);
   const [contactsError, setContactsError] = useState<string | null>(null);
 
+  // Visits state
+  const [visits, setVisits] = useState<any[]>([]);
+  const [visitsLoading, setVisitsLoading] = useState(false);
+  const [visitsError, setVisitsError] = useState<string | null>(null);
+
   // Check authentication on mount
   useEffect(() => {
     const adminAuth = localStorage.getItem('adminAuthenticated');
@@ -148,6 +156,9 @@ export function AdminDashboard() {
     if (activeTab === 'contact' && contacts.length === 0 && !contactsLoading && !contactsError) {
       loadContacts();
     }
+    if (activeTab === 'visits' && visits.length === 0 && !visitsLoading && !visitsError) {
+      loadVisits();
+    }
   }, [activeTab, isAuthenticated]);
 
   // Load dashboard stats
@@ -155,14 +166,27 @@ export function AdminDashboard() {
     setStatsLoading(true);
     setStatsError(null);
     try {
-      const data = await fetchJson<DashboardStatsResponse>('/api/registrations?stats=true');
+      // Load registration stats and visit stats in parallel
+      const [registrationData, visitData] = await Promise.all([
+        fetchJson<DashboardStatsResponse>('/api/registrations?stats=true').catch(() => null),
+        fetchJson<{ total: number; daily: number; weekly: number; monthly: number; topCountries: { country: string; count: number }[]; topPages: { page: string; count: number }[] }>('/api/visits?stats=true').catch(() => null),
+      ]);
+
       setStats({
-        totalRegistrations: data.totalRegistrations,
-        todayRegistrations: data.todayRegistrations,
-        thisWeekRegistrations: data.thisWeekRegistrations || 0,
-        thisMonthRegistrations: data.thisMonthRegistrations || 0,
-        topCountries: data.topCountries || [],
-        recentActivity: data.recentActivity || [],
+        totalRegistrations: registrationData?.totalRegistrations || 0,
+        todayRegistrations: registrationData?.todayRegistrations || 0,
+        thisWeekRegistrations: registrationData?.thisWeekRegistrations || 0,
+        thisMonthRegistrations: registrationData?.thisMonthRegistrations || 0,
+        topCountries: registrationData?.topCountries || [],
+        recentActivity: registrationData?.recentActivity || [],
+        visitStats: visitData ? {
+          total: visitData.total || 0,
+          daily: visitData.daily || 0,
+          weekly: visitData.weekly || 0,
+          monthly: visitData.monthly || 0,
+          topCountries: visitData.topCountries || [],
+          topPages: visitData.topPages || [],
+        } : null,
       });
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load stats:', err);
@@ -263,6 +287,21 @@ export function AdminDashboard() {
     }
   };
 
+  // Load visits
+  const loadVisits = async () => {
+    setVisitsLoading(true);
+    setVisitsError(null);
+    try {
+      const data = await fetchJson<{ visits: any[] }>('/api/visits');
+      setVisits(data.visits || []);
+    } catch (err: any) {
+      console.error('[AdminDashboard] Failed to load visits:', err);
+      setVisitsError(err.message || 'Failed to load visits');
+    } finally {
+      setVisitsLoading(false);
+    }
+  };
+
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
@@ -280,6 +319,8 @@ export function AdminDashboard() {
       loadRegistrations();
     } else if (activeTab === 'registrations') {
       loadRegistrations();
+    } else if (activeTab === 'visits') {
+      loadVisits();
     } else if (activeTab === 'blog') {
       loadBlogPosts();
     } else if (activeTab === 'events') {
@@ -391,6 +432,16 @@ export function AdminDashboard() {
               setRegistrations={setRegistrations}
               loading={registrationsLoading}
               error={registrationsError}
+              onRefresh={handleRefresh}
+            />
+          )}
+
+          {activeTab === 'visits' && (
+            <VisitsTab
+              visits={visits}
+              setVisits={setVisits}
+              loading={visitsLoading}
+              error={visitsError}
               onRefresh={handleRefresh}
             />
           )}

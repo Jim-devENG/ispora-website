@@ -268,7 +268,8 @@ export const registrationService = {
       if (!response.ok) throw new Error('Failed to fetch registrations');
       const data = await response.json();
       // Map API data to expected format
-      return data.map((item: any) => ({
+      const registrations = data.registrations || data; // Support both formats
+      return registrations.map((item: any) => ({
         id: item._id,
         name: item.name,
         email: item.email,
