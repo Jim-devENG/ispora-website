@@ -138,8 +138,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         console.log('Stats API: Top countries computed:', topCountries);
 
+        // Also get visit statistics in parallel
+        let visitStats = null;
+        try {
+          const now = new Date();
+          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+          const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+          const [visitTotalResult, visitDailyResult, visitWeeklyResult, visitMonthlyResult, visitTopCountriesResult, visitTopPagesResult] = await Promise.all([
+            supabase.from('visits').select('*', { count: 'exact', head: true }),
+            supabase.from('visits').select('*', { count: 'exact', head: true }).gte('created_at', oneDayAgo),
+            supabase.from('visits').select('*', { count: 'exact', head: true }).gte('created_at', oneWeekAgo),
+            supabase.from('visits').select('*', { count: 'exact', head: true }).gte('created_at', oneMonthAgo),
+            supabase.from('visits').select('country').gte('created_at', oneMonthAgo),
+            supabase.from('visits').select('page').gte('created_at', oneMonthAgo),
+          ]);
+
+          const visitCountryCounts: { [key: string]: number } = {};
+          (visitTopCountriesResult.data || []).forEach((visit: any) => {
+            const country = visit.country || 'Unknown';
+            visitCountryCounts[country] = (visitCountryCounts[country] || 0) + 1;
+          });
+
+          const visitTopCountries = Object.entries(visitCountryCounts)
+            .map(([country, count]) => ({ country, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+          const visitPageCounts: { [key: string]: number } = {};
+          (visitTopPagesResult.data || []).forEach((visit: any) => {
+            const page = visit.page || 'Unknown';
+            visitPageCounts[page] = (visitPageCounts[page] || 0) + 1;
+          });
+
+          const visitTopPages = Object.entries(visitPageCounts)
+            .map(([page, count]) => ({ page, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+          visitStats = {
+            total: visitTotalResult.count || 0,
+            daily: visitDailyResult.count || 0,
+            weekly: visitWeeklyResult.count || 0,
+            monthly: visitMonthlyResult.count || 0,
+            topCountries: visitTopCountries,
+            topPages: visitTopPages
+          };
+        } catch (err) {
+          console.warn('[API][REGISTRATIONS] Failed to load visit stats:', err);
+          // Continue without visit stats
+        }
+
         // Map to expected format
-        const result = {
+        const result: any = {
           totalRegistrations: total,
           todayRegistrations: daily,
           thisWeekRegistrations: weekly,
@@ -147,6 +199,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           topCountries,
           recentActivity
         };
+
+        // Add visit stats if available
+        if (visitStats) {
+          result.visitStats = visitStats;
+        }
 
         return res.status(200).json(result);
       }

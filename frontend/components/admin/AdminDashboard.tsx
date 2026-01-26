@@ -166,11 +166,8 @@ export function AdminDashboard() {
     setStatsLoading(true);
     setStatsError(null);
     try {
-      // Load registration stats and visit stats in parallel
-      const [registrationData, visitData] = await Promise.all([
-        fetchJson<DashboardStatsResponse>('/api/registrations?stats=true').catch(() => null),
-        fetchJson<{ total: number; daily: number; weekly: number; monthly: number; topCountries: { country: string; count: number }[]; topPages: { page: string; count: number }[] }>('/api/visits?stats=true').catch(() => null),
-      ]);
+      // Load registration stats (which now includes visit stats)
+      const registrationData = await fetchJson<DashboardStatsResponse & { visitStats?: { total: number; daily: number; weekly: number; monthly: number; topCountries: { country: string; count: number }[]; topPages: { page: string; count: number }[] } }>('/api/registrations?stats=true');
 
       setStats({
         totalRegistrations: registrationData?.totalRegistrations || 0,
@@ -179,14 +176,7 @@ export function AdminDashboard() {
         thisMonthRegistrations: registrationData?.thisMonthRegistrations || 0,
         topCountries: registrationData?.topCountries || [],
         recentActivity: registrationData?.recentActivity || [],
-        visitStats: visitData ? {
-          total: visitData.total || 0,
-          daily: visitData.daily || 0,
-          weekly: visitData.weekly || 0,
-          monthly: visitData.monthly || 0,
-          topCountries: visitData.topCountries || [],
-          topPages: visitData.topPages || [],
-        } : null,
+        visitStats: registrationData?.visitStats || null,
       });
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load stats:', err);
