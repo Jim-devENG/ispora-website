@@ -403,6 +403,16 @@ export function AdminDashboard() {
               {navItems.find((item) => item.id === activeTab)?.label || 'Dashboard'}
             </h2>
           </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+              title="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="hidden sm:inline font-medium">Logout</span>
+            </button>
+          </div>
         </header>
 
         {/* Content Area */}
