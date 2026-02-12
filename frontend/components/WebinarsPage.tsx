@@ -58,14 +58,26 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
   }, []);
 
   // Filter events by status and date
-  const now = new Date().toISOString();
+  const now = new Date();
+  const getStartAt = (e: any) => e.start_at || e.event_date || e.date;
+  const getEffectiveEndAt = (e: any) => e.end_at || getStartAt(e);
+
   const upcomingEvents = events.filter((e: any) => {
     if (e.status !== 'published') return false;
-    return e.start_at && new Date(e.start_at) >= new Date(now);
+    const endAtRaw = getEffectiveEndAt(e);
+    if (!endAtRaw) return false;
+    const endAt = new Date(endAtRaw);
+    if (Number.isNaN(endAt.getTime())) return false;
+    return endAt >= now;
   });
+
   const pastEvents = events.filter((e: any) => {
     if (e.status !== 'published') return false;
-    return e.start_at && new Date(e.start_at) < new Date(now);
+    const endAtRaw = getEffectiveEndAt(e);
+    if (!endAtRaw) return false;
+    const endAt = new Date(endAtRaw);
+    if (Number.isNaN(endAt.getTime())) return false;
+    return endAt < now;
   });
   
   const displayEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents;

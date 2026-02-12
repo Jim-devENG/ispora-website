@@ -89,7 +89,8 @@ export function EventDetailPage({ onPageChange, eventId }: EventDetailPageProps)
 
   const startDate = new Date(event.start_at);
   const endDate = event.end_at ? new Date(event.end_at) : null;
-  const isPast = startDate < new Date();
+  const effectiveEndDate = endDate ?? startDate;
+  const isPast = effectiveEndDate < new Date();
 
   return (
     <div className="min-h-screen">

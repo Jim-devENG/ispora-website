@@ -58,11 +58,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         query = query.eq('status', 'published');
       }
 
-      // Filter by upcoming (only events with start_at >= now)
+      // Filter by upcoming (include ongoing multi-day events)
       const upcomingFilter = upcoming === 'true' || (upcoming === undefined && status !== 'all');
       if (upcomingFilter) {
         const now = new Date().toISOString();
-        query = query.gte('start_at', now);
+        // Upcoming/ongoing means: end_at >= now OR (no end_at and start_at >= now)
+        // Supabase supports OR filters via a comma-separated expression.
+        query = query.or(`end_at.gte.${now},and(end_at.is.null,start_at.gte.${now})`);
       }
 
       // Sort by start_at ascending
@@ -117,16 +119,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      // Automatically set status to 'archived' if start_at is in the past
+      // Automatically set status to 'archived' if the event has ended
       const now = new Date();
       let eventStatus = body.status && ['draft', 'published', 'archived'].includes(body.status) 
         ? body.status 
         : 'draft';
       
-      // If date is in the past, automatically archive (unless explicitly set to draft)
-      if (startAt < now && eventStatus !== 'draft') {
+      // If the effective end is in the past, automatically archive (unless explicitly set to draft)
+      const endAtCandidate = body.end_at ? new Date(body.end_at) : null;
+      const effectiveEndAt = endAtCandidate && !isNaN(endAtCandidate.getTime()) ? endAtCandidate : startAt;
+      if (effectiveEndAt < now && eventStatus !== 'draft') {
         eventStatus = 'archived';
-        console.log('[API][EVENTS] Auto-archiving new event - start_at is in the past');
+        console.log('[API][EVENTS] Auto-archiving new event - event has ended');
       }
 
       // Prepare event data (sanitize all string fields)
