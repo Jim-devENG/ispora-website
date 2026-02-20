@@ -3,6 +3,7 @@ import type { Event } from '../../../src/types/admin';
 import { Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, X, Download } from 'lucide-react';
 import { apiClient } from '../../../src/lib/apiClient';
 import { ImageUpload } from '../../ui/ImageUpload';
+import { RichTextEditor } from '../../ui/RichTextEditor';
 import { exportEventsToCSV } from '../../../src/utils/exportToCSV';
 
 interface EventsTabProps {
@@ -395,11 +396,12 @@ export function EventsTab({ events, setEvents, loading, error, onRefresh }: Even
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Description
                 </label>
-                <textarea
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={5}
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(value) => setFormData({ ...formData, description: value })}
+                  placeholder="Write your event description here..."
+                  className="w-full"
+                  uploadType="event"
                 />
               </div>
 

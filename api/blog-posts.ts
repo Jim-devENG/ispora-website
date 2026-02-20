@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 import type { BlogPost } from './_types/content.js';
-import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, sanitizeString, isValidURL } from './_lib/security.js';
+import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, sanitizeString, sanitizeRichTextHtml, isValidURL } from './_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -103,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const postData: Partial<BlogPost> = {
         title: sanitizeString(body.title, 500),
         slug: body.slug,
-        content: body.content,
+        content: sanitizeRichTextHtml(body.content, 50000),
         excerpt: body.excerpt || null,
         tags: Array.isArray(body.tags) ? body.tags : (body.tags ? [body.tags] : []),
         status: body.status || 'draft',

@@ -376,6 +376,7 @@ export function BlogTab({ posts, setPosts, loading, error, onRefresh }: BlogTabP
                   onChange={(value) => setFormData({ ...formData, content: value })}
                   placeholder="Write your blog post content here..."
                   className="w-full"
+                  uploadType="blog"
                 />
               </div>
 

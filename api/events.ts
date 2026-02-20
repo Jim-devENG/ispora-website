@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 import type { Event } from './_types/content.js';
-import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, sanitizeString, isValidURL } from './_lib/security.js';
+import { checkRateLimit, getClientIP, sanitizeObject, validateRequired, sanitizeString, sanitizeRichTextHtml, isValidURL } from './_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -136,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Prepare event data (sanitize all string fields)
       const eventData: Partial<Event> = {
         title: sanitizeString(body.title, 500),
-        description: body.description ? sanitizeString(body.description, 10000) : null,
+        description: body.description ? sanitizeRichTextHtml(body.description, 50000) : null,
         start_at: startAt.toISOString(),
         end_at: body.end_at ? new Date(body.end_at).toISOString() : null,
         location: body.location ? sanitizeString(body.location, 200) : null,

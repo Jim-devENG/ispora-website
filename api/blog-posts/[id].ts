@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from '../_lib/supabase.js';
 import type { BlogPost, BlogPostResponse, ApiError } from '../_types/content.js';
+import { sanitizeRichTextHtml } from '../_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Match working pattern: Supabase connection first
@@ -111,7 +112,7 @@ async function handleUpdate(
   
   if (body.title !== undefined) updateData.title = body.title;
   if (body.slug !== undefined) updateData.slug = body.slug;
-  if (body.content !== undefined) updateData.content = body.content;
+  if (body.content !== undefined) updateData.content = sanitizeRichTextHtml(body.content, 50000);
   if (body.excerpt !== undefined) updateData.excerpt = body.excerpt;
   if (body.tags !== undefined) {
     updateData.tags = Array.isArray(body.tags) ? body.tags : (body.tags ? [body.tags] : []);

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from '../_lib/supabase.js';
 import type { Event, EventResponse, ApiError } from '../_types/content.js';
+import { sanitizeRichTextHtml } from '../_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Match working pattern: Supabase connection first
@@ -110,7 +111,7 @@ async function handleUpdate(
   const updateData: Partial<Event> = {};
   
   if (body.title !== undefined) updateData.title = body.title;
-  if (body.description !== undefined) updateData.description = body.description;
+  if (body.description !== undefined) updateData.description = sanitizeRichTextHtml(body.description, 50000);
   if (body.start_at !== undefined || body.startAt !== undefined) {
     const startAt = new Date(body.start_at || body.startAt);
     if (isNaN(startAt.getTime())) {

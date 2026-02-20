@@ -60,6 +60,29 @@ export function sanitizeString(input: any, maxLength: number = 1000): string {
   return sanitized;
 }
 
+// Sanitize rich-text HTML input
+// - Preserves HTML tags for editors like Quill
+// - Removes script tags, inline event handlers, and javascript: URLs
+export function sanitizeRichTextHtml(input: any, maxLength: number = 10000): string {
+  if (typeof input !== 'string') {
+    return '';
+  }
+
+  let sanitized = input.trim().substring(0, maxLength);
+
+  // Remove script blocks
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+  // Remove inline event handlers like onclick=...
+  sanitized = sanitized.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+
+  // Remove javascript: protocol in href/src
+  sanitized = sanitized.replace(/(href|src)\s*=\s*("|')\s*javascript:[^"']*("|')/gi, '$1=$2#$3');
+  sanitized = sanitized.replace(/(href|src)\s*=\s*javascript:[^\s>]*/gi, '$1=#');
+
+  return sanitized;
+}
+
 // Validate email format
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
