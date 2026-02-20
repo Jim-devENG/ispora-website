@@ -22,6 +22,12 @@ export function RichTextEditor({
   const quillRef = useRef<ReactQuill | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const safeValue = typeof value === 'string' ? value : '';
+
+  const handleChange = useCallback((nextValue: any) => {
+    onChange(typeof nextValue === 'string' ? nextValue : '');
+  }, [onChange]);
+
   const uploadAndInsertImage = useCallback(async (file: File) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -132,8 +138,8 @@ export function RichTextEditor({
           quillRef.current = instance;
         }}
         theme="snow"
-        value={value}
-        onChange={onChange}
+        value={safeValue}
+        onChange={handleChange}
         modules={modules}
         formats={formats}
         placeholder={placeholder}
