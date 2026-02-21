@@ -38,7 +38,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
       <Section 
         className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 border-b border-primary/20"
         style={{
-          background: 'linear-gradient(135deg, hsl(220 100% 96%) 0%, hsl(220 100% 92%) 50%, hsl(220 100% 95%) 100%)'
+          background: 'linear-gradient(135deg, hsl(213 100% 94%) 0%, hsl(221 100% 90%) 35%, hsl(235 85% 92%) 70%, hsl(210 100% 96%) 100%)'
         }}
       >
         {/* Animated Background Elements */}

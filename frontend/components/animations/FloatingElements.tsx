@@ -62,15 +62,18 @@ export function FloatingIcon({
 export function AnimatedBlob({ 
   className = '',
   delay = 0,
-  size = 'w-64 h-64'
+  size = 'w-64 h-64',
+  style
 }: {
   className?: string;
   delay?: number;
   size?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <motion.div
       className={`absolute ${size} ${className} rounded-full blur-3xl opacity-30`}
+      style={style}
       animate={safeAnimate({
         x: [0, 100, 0],
         y: [0, 50, 0],
