@@ -206,7 +206,8 @@ export function AdminDashboard() {
     setPostsLoading(true);
     setPostsError(null);
     try {
-      const data = await fetchJson<BlogPostsResponse>('/api/blog-posts');
+      // Admin dashboard should show ALL blog posts (draft, published, archived)
+      const data = await fetchJson<BlogPostsResponse>('/api/blog-posts?status=all');
       setPosts(data.posts || []);
     } catch (err: any) {
       console.error('[AdminDashboard] Failed to load blog posts:', err);
