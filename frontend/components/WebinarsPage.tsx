@@ -85,13 +85,13 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
   return (
     <div className="min-h-screen">
       {/* Page Header */}
-      <Section 
+      <Section
         className="relative overflow-hidden pt-24 pb-12 sm:pt-32"
         style={{
-          background: 'linear-gradient(135deg, hsl(213 100% 94%) 0%, hsl(221 100% 90%) 35%, hsl(235 85% 92%) 70%, hsl(210 100% 96%) 100%)'
+          background: 'linear-gradient(135deg, hsl(214 95% 92%) 0%, hsl(219 95% 86%) 35%, hsl(228 90% 82%) 70%, hsl(210 100% 95%) 100%)'
         }}
       >
-        <AnimatedBlob className="top-0 left-0 bg-primary/15" delay={0} size="w-96 h-96" />
+        <AnimatedBlob className="top-0 left-0 bg-primary/20" delay={0} size="w-96 h-96" />
         <AnimatedBlob className="bottom-0 right-0 bg-secondary/15" delay={2} size="w-80 h-80" />
         <AnimatedDots />
         
